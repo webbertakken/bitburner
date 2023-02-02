@@ -1,0 +1,12 @@
+{
+  "name": "bitburner",
+  "version": "1.0.0",
+  "description": "AI that will take over the world in a game called Bitburner",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx bitburner-filesync"
+  },
+  "author": "Webber <webber@takken.io>",
+  "license": "MIT"
+}
