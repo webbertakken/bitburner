@@ -7,6 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx bitburner-filesync"
   },
+  "devDependencies": {
+    "prettier": "^2.8.3"
+  },
   "author": "Webber <webber@takken.io>",
   "license": "MIT"
 }
