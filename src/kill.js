@@ -1,10 +1,10 @@
-import { openTail, configure } from './utils/index.js'
+import { window, configure } from './utils/index.js'
 
 /** @param {NS} ns */
 export async function main(ns) {
   // Tail own window
   await configure(ns)
-  await openTail(ns, 1, 2)
+  await window(ns, 1, 2)
   ns.clearLog()
 
   // Close all windows

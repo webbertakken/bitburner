@@ -1,5 +1,5 @@
 /** @param {NS} ns */
-export const openTail = async (ns, nth = 0, span = 1) => {
+export const window = async (ns, nth = 0, span = 1) => {
   ns.closeTail()
   await ns.sleep(50)
   const { pid } = ns.getRunningScript() || { pid: 0 }
@@ -25,7 +25,7 @@ export const getMaxThreads = async(ns, scriptNameOrRamAmount) => {
 
   const cost = typeof scriptNameOrRamAmount === 'string' ? ns.getScriptRam(scriptNameOrRamAmount) : scriptNameOrRamAmount
 
-  return Math.floor(free / cost)  
+  return Math.floor(free / cost)
 }
 
 /** @param {NS} ns */

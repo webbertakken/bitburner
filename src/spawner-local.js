@@ -1,4 +1,4 @@
-import { openTail, configure, getMaxThreads } from './utils/index.js'
+import { window, configure, getMaxThreads } from './utils/index.js'
 
 const threadsToHack = 200
 
@@ -14,7 +14,7 @@ const maxUtilise = async (ns) => {
   // Spawn most instances
   const instanceNum = Math.floor(threads / 50)
   for (let i = 0; i < instanceNum ; i++) {
-    ns.run(script, 50)  
+    ns.run(script, 50)
   }
 
   // Spawn exact amount of threads
@@ -34,7 +34,7 @@ export async function main(ns) {
   const target = 'harakiri-sushi'
 
   await configure(ns)
-  await openTail(ns, 4)
+  await window(ns, 4)
 
   await spawnCollector(ns, target)
   await maxUtilise(ns)

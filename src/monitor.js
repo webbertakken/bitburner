@@ -1,4 +1,4 @@
-import { openTail } from './utils/index.js'
+import { window } from './utils/index.js'
 
 /** @param {NS} ns */
 export async function main(ns) {
@@ -7,7 +7,7 @@ export async function main(ns) {
     const self = ns.getHostname()
 
     // Tail own window
-    await openTail(ns, 1, 2)
+    await window(ns, 1, 2)
 
     const node = { id: 'harakiri-sushi'}
     ns.disableLog('ALL')

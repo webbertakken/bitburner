@@ -1,4 +1,4 @@
-import { openTail, configure } from './utils/index.js'
+import { window, configure } from './utils/index.js'
 
 /** @param {NS} ns */
 export async function main(ns) {
@@ -6,9 +6,9 @@ export async function main(ns) {
 
   const self = ns.getHostname()
   const host = 'harakiri-sushi'
-  
+
   // Tail own window
-  await openTail(ns, 3)
+  await window(ns, 3)
 
 
   ns.print('\n')

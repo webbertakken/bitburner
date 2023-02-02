@@ -1,4 +1,4 @@
-import { openTail, configure, mFormat, getMaxThreads } from './utils/index.js'
+import { window, configure, mFormat, getMaxThreads } from './utils/index.js'
 
 const ramNeededForHack = 0.1
 
@@ -7,7 +7,7 @@ export async function main(ns) {
   const target = ns.args[0]
 
   await configure(ns)
-  await openTail(ns, 5)
+  await window(ns, 5)
 
   while(true) {
     const { threads: scriptThreads } = ns.getRunningScript()
