@@ -1,4 +1,5 @@
 import { window } from './utils/index.js'
+import { LOG_ALL } from "./constants";
 
 /** @param {NS} ns */
 export async function main(ns) {
@@ -10,7 +11,7 @@ export async function main(ns) {
     await window(ns, 1, 2)
 
     const node = { id: 'harakiri-sushi'}
-    ns.disableLog('ALL')
+    ns.disableLog(LOG_ALL)
     while (true) {
         ns.clearLog()
         ns.print(`${node.id} (security: ${ns.getServerSecurityLevel(node.id)}/${ns.getServerMinSecurityLevel(node.id)}, moneys ${ns.nFormat(ns.getServerMoneyAvailable(node.id), '($0,00 a)')}/${ns.nFormat(ns.getServerMaxMoney(node.id), '($0,00 a)')}`)

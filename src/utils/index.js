@@ -13,7 +13,12 @@ export const window = async (ns, nth = 0, span = 1) => {
 /** @param {NS} ns */
 export const configure = async (ns) => {
   ns.disableLog('disableLog')
+  ns.disableLog('enableLog');
   ns.disableLog('sleep');
+  ns.disableLog('getHostname')
+  ns.disableLog('getServerMaxRam')
+  ns.disableLog('getServerUsedRam')
+  ns.disableLog('getScriptRam')
 }
 
 /** @param {NS} ns */
