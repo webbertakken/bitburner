@@ -19,6 +19,23 @@ export const configure = async (ns) => {
   ns.disableLog('getServerMaxRam')
   ns.disableLog('getServerUsedRam')
   ns.disableLog('getScriptRam')
+  ns.disableLog('getServerMoneyAvailable')
+  ns.disableLog('getServerMaxMoney')
+  ns.disableLog('getServerSecurityLevel')
+  ns.disableLog('getServerBaseSecurityLevel')
+  ns.disableLog('getServerMinSecurityLevel')
+  ns.disableLog('getServerGrowth')
+  ns.disableLog('getServerRequiredHackingLevel')
+  ns.disableLog('getServerNumPortsRequired')
+  ns.disableLog('growthAnalyze')
+  ns.disableLog('growthAnalyzeSecurity')
+  ns.disableLog('getGrowTime')
+  ns.disableLog('hackAnalyzeSecurity')
+  ns.disableLog('hackAnalyzeChance')
+  ns.disableLog('hackAnalyze')
+  ns.disableLog('getHackTime')
+  ns.disableLog('weakenAnalyze')
+  ns.disableLog('getWeakenTime')
 }
 
 /** @param {NS} ns */
