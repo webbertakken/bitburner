@@ -14,6 +14,7 @@ export async function main(ns) {
   // Run home scripts.
   ns.run('monitor.js')
   ns.run('nuker.js')
-  ns.run('rent-stuff.js')
+  ns.run('farmer.js')
+  ns.run('controller.js')
   ns.run('spawner-local.js')
 }

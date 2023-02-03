@@ -6,6 +6,7 @@ export async function main(ns) {
 
   const self = ns.getHostname()
   const host = 'harakiri-sushi'
+  const targetHost = 'harakiri-sushi'
 
   // Tail own window
   await window(ns, 3)
@@ -34,7 +35,7 @@ export async function main(ns) {
   const free = max - used;
   const needed = ns.getScriptRam(remoteScript, host)
   const threads = Math.floor(free / needed)
-  ns.exec(remoteScript, host, threads)
+  ns.exec(remoteScript, host, threads, targetHost)
 
   while (true) {
     // nothing

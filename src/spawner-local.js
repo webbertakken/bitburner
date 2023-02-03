@@ -3,9 +3,8 @@ import { window, configure, getMaxThreads } from './utils/index.js'
 const threadsToHack = 200
 
 const fillAllocation = async (ns, script, utilisation = 1) => {
-
   // Calculate threads
-  const maxThreads = await getMaxThreads(ns, script)
+  const maxThreads = await getMaxThreads(ns, script, 20)
   const threads = maxThreads * utilisation
 
   // Spawn most instances
@@ -38,7 +37,7 @@ export async function main(ns) {
   // never utilise 100% because it causes trouble when reloading a script that because bigger
   await spawnCollector(ns, target)
   await fillAllocation(ns, '/dist/grow.js', 0.7)
-  await fillAllocation(ns, '/dist/weaken.js', 0.9)
+  await fillAllocation(ns, '/dist/weaken.js', 0.90)
 
 
   while(true) {

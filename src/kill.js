@@ -4,7 +4,7 @@ import { window, configure } from './utils/index.js'
 export async function main(ns) {
   // Tail own window
   await configure(ns)
-  await window(ns, 1, 2)
+  await window(ns, 1, 0, 2)
   ns.clearLog()
 
   // Close all windows

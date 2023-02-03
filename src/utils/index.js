@@ -1,20 +1,25 @@
 /** @param {NS} ns */
-export const window = async (ns, nth = 0, span = 1) => {
+export const window = async (ns, row = 0, col = 0, rowSpan = 1) => {
+  const width = 670
+  const height = 220
+  const spacer = 10
+
+  // Close previous window
   ns.closeTail()
-  await ns.sleep(50)
+
+  // Open new window
   const { pid } = ns.getRunningScript() || { pid: 0 }
   ns.tail(pid)
-  await ns.sleep(50)
-  ns.moveTail(2150, 80 + nth * 230, pid)
-  await ns.sleep(50)
-  ns.resizeTail(700, span * 220 + (span - 1) * 10, pid)
+  await ns.sleep(1) // Need to wait for window to actually spawn
+  ns.moveTail(2190 - col * (width + spacer), 10 + row * (height + spacer), pid)
+  ns.resizeTail(width, rowSpan * height + (rowSpan - 1) * spacer, pid)
 }
 
 /** @param {NS} ns */
 export const configure = async (ns) => {
   ns.disableLog('disableLog')
-  ns.disableLog('enableLog');
-  ns.disableLog('sleep');
+  ns.disableLog('enableLog')
+  ns.disableLog('sleep')
   ns.disableLog('getHostname')
   ns.disableLog('getServerMaxRam')
   ns.disableLog('getServerUsedRam')
@@ -39,18 +44,23 @@ export const configure = async (ns) => {
 }
 
 /** @param {NS} ns */
-export const getMaxThreads = async(ns, scriptNameOrRamAmount) => {
+export const getMaxThreads = async (ns, scriptNameOrRamAmount, saveGb = 0) => {
   const self = ns.getHostname()
-  const max = ns.getServerMaxRam(self)
+  const max = Math.max(0, ns.getServerMaxRam(self) - saveGb)
   const used = ns.getServerUsedRam(self)
-  const free = max - used;
+  const free = max - used
 
-  const cost = typeof scriptNameOrRamAmount === 'string' ? ns.getScriptRam(scriptNameOrRamAmount) : scriptNameOrRamAmount
+  const cost =
+    typeof scriptNameOrRamAmount === 'string'
+      ? ns.getScriptRam(scriptNameOrRamAmount)
+      : scriptNameOrRamAmount
 
   return Math.floor(free / cost)
 }
 
 /** @param {NS} ns */
-export const mFormat = async(ns, amount) => {
-  return ns.nFormat(amount, '($0,00 a)')
-}
+export const getFormatters = (ns) => ({
+  money: (amount) => `${ns.nFormat(amount, '$0.00a')}`.toUpperCase(),
+  number: (amount) => ns.nFormat(amount, '0.00'),
+  percentage: (amount) => ns.nFormat(amount, '0.00%'),
+})

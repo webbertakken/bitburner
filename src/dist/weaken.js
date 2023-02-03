@@ -1,6 +1,6 @@
 /** @param {NS} ns */
 export async function main(ns) {
-  const host = ns.getHostname()
+  const host = 'harakiri-sushi'
   while(true) {
     await ns.weaken(host)
   }
