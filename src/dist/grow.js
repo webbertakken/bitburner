@@ -1,5 +1,5 @@
 /** @param {NS} ns */
 export async function main(ns) {
-  const target = ns.args[0] || 'harakiri-sushi'
+  const target = ns.args[0]
   while (true) await ns.grow(target)
 }
