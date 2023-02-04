@@ -17,6 +17,8 @@ const hacknet = async (ns) => {
     }
   }
 
+  if (h.numNodes() === 0) return
+
   // Get all nodes
   const nodes = Array.from({ length: h.numNodes() }, (e, i) => ({
     ...h.getNodeStats(i),

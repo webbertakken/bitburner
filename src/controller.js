@@ -21,11 +21,11 @@ const hardware = async (ns) => {
   const maxServers = ns.getPurchasedServerLimit()
   const numPurchasedServers = ns.getPurchasedServers().length
 
-  // First buy up to the maximum amount of servers
+  // First buy up to the maximum amount of servers (asap, go over budget)
   if (numPurchasedServers < maxServers) {
     let scale = Math.pow(2, 10) // 1 TB
     const newServerCost = ns.getPurchasedServerCost(scale)
-    if (newServerCost < maxSpendingPerItem) {
+    if (newServerCost < maxSpendingPerItem || (newServerCost <= 100e6 && myMoney >= 100e6)) {
       const nextId = ns.getPurchasedServers().length % maxServers
       const hostname = `webber${nextId}`
       ns.print(`Buying new server "${hostname}" for ${f.money(newServerCost)}...`)

@@ -1,95 +1,70 @@
-import { window, configure } from './utils/index.js'
+import { window, configure, getNodeInfo } from './utils/index.js'
 
 const SECONDS = 1000
-const SPACER = 0.75 * SECONDS
 
 /** @param {NS} ns */
 const createWorm = (ns) => {
-  const registry = {}
+  const registry = { isInitialRun: true }
 
-  const spacer = async () => await ns.sleep(SPACER)
+  const scanSelf = async () => ({ hackingLevel: ns.getHackingLevel(), id: ns.getHostname() })
 
-  const scanSelf = async () => ({ hackingLevel: ns.getHackingLevel() })
+  const getNode = (nodeId) => getNodeInfo(ns, nodeId)
 
-  const scanNetwork = async () => {
+  const scanNetwork = async (host) => {
     return ns
-      .scan()
-      .map((node) => {
-        const maxRam = ns.getServerMaxRam(node)
-        const usedRam = ns.getServerUsedRam(node)
-
-        // Utilised more than 60% of RAM
-        // Accurate enough for both small server with little RAM  and big servers that double in size
-        let needsPayloadUpdate = maxRam >= 8 && usedRam / maxRam <= 0.6
-
-        return {
-          id: node,
-          securityLevel: ns.getServerSecurityLevel(node),
-          minSecurityLevel: ns.getServerMinSecurityLevel(node),
-          reqHackingLevel: ns.getServerRequiredHackingLevel(node),
-          reqPorts: ns.getServerNumPortsRequired(node),
-          moneys: ns.getServerMoneyAvailable(node),
-          formattedMoneys: ns.nFormat(ns.getServerMoneyAvailable(node), '(0.00 a)'),
-          maxMoneys: ns.getServerMaxMoney(node),
-          formattedMaxMoneys: ns.nFormat(ns.getServerMaxMoney(node), '(0.00 a)'),
-          growth: ns.getServerGrowth(node),
-          maxRam,
-          usedRam,
-          needsPayloadUpdate,
-          weakenTime: ns.getWeakenTime(node),
-          growTime: ns.getGrowTime(node),
-          hackTime: ns.getHackTime(node),
-          hackChance: ns.hackAnalyzeChance(node),
-          formattedHackTime: ns.nFormat(ns.getHackTime(node) / 1000, '(MM:ss)'),
-          hasRootAccess: ns.hasRootAccess(node),
-        }
-      })
+      .scan(host)
+      .filter((nodeId) => !registry.discovered.includes(nodeId))
+      .map(getNode)
       .sort((a, b) => a.securityLevel - b.securityLevel)
   }
 
   const tryGetAccess = async (node) => {
     if (node.hasRootAccess) {
-      ns.print(`✅ ${node.id} - (${node.maxRam}GB)`)
+      // ns.print(`✅ ${node.id} - (${node.maxRam}GB)`)
       return true
     }
 
     if (node.reqHackingLevel > registry.self.hackingLevel) {
-      ns.print(`❌ ${node.id} - (req hacking level: ${node.reqHackingLevel}).`)
+      // ns.print(`❌ ${node.id} - (req hacking level: ${node.reqHackingLevel}).`)
       return false
     }
 
-    ns.print(
-      `Hacking "${node.id}" (req ports: ${node.reqPorts}, hack time: ${node.formattedHackTime})`,
-    )
+    let portsLeft = node.reqPorts
+    if (portsLeft >= 1) {
+      if (ns.fileExists('BruteSSH.exe')) {
+        ns.brutessh(node.id)
+        portsLeft--
+      }
+      if (ns.fileExists('HTTPWorm.exe')) {
+        ns.httpworm(node.id)
+        portsLeft--
+      }
 
-    if (ns.getServerNumPortsRequired(node.id) >= 1 && ns.fileExists('BruteSSH.exe')) {
-      ns.brutessh(node.id)
+      if (ns.fileExists('FTPCrack.exe')) {
+        ns.ftpcrack(node.id)
+        portsLeft--
+      }
+
+      if (ns.fileExists('relaySMTP.exe')) {
+        ns.relaysmtp(node.id)
+        portsLeft--
+      }
+
+      if (ns.fileExists('SQLInject.exe')) {
+        ns.sqlinject(node.id)
+        portsLeft--
+      }
     }
 
-    if (ns.getServerNumPortsRequired(node.id) >= 1 && ns.fileExists('HTTPWorm.exe')) {
-      ns.httpworm(node.id)
-    }
-
-    if (ns.getServerNumPortsRequired(node.id) >= 1 && ns.fileExists('FTPCrack.exe')) {
-      ns.ftpcrack(node.id)
-    }
-
-    if (ns.getServerNumPortsRequired(node.id) >= 1 && ns.fileExists('relaySMTP.exe')) {
-      ns.relaysmtp(node.id)
-    }
-
-    if (ns.getServerNumPortsRequired(node.id) >= 1 && ns.fileExists('SQLInject.exe')) {
-      ns.sqlinject(node.id)
-    }
-
-    const portsLeft = ns.getServerNumPortsRequired(node.id)
-    if (portsLeft > 0) {
-      ns.print(`❌ ${node.id} - ${portsLeft} ports left.`)
+    if (portsLeft >= 1) {
+      // ns.print(`❌ ${node.id} - ${portsLeft} ports left.`)
       return false
     }
 
     ns.nuke(node.id)
     ns.print(`✅ ${node.id} - Successfully cracked.`)
+    registry.hasNewNodes = true
+    registry.exploited.push(node.id)
     return true
   }
 
@@ -98,8 +73,9 @@ const createWorm = (ns) => {
 
     const self = ns.getHostname()
 
-    ns.print('\n')
-    ns.print(`--- ${host} ---`)
+    // Skip problematic hosts
+    const exclusions = ['CSEC']
+    if (exclusions.includes(host)) return
 
     // Copy scripts
     const scripts = [
@@ -111,7 +87,8 @@ const createWorm = (ns) => {
     ]
 
     for (const { script, remoteScript } of scripts) {
-      ns.scp(script, host, self)
+      const uploadSuccess = ns.scp(script, host, self)
+      if (!uploadSuccess) throw new Error(`Failed to upload ${script} to ${host}`)
       if (remoteScript !== script) ns.mv(host, script, remoteScript)
     }
 
@@ -125,22 +102,52 @@ const createWorm = (ns) => {
     ns.exec(remoteScript, host, 1, registry.target)
   }
 
-  const run = async (target) => {
-    ns.print(`Running worm...`)
-    await spacer()
+  const exploitNetwork = async (nodeId = registry.self.id) => {
+    const network = await scanNetwork(nodeId)
+    // Deliver payloads
+    for (const node of network) {
+      registry.discovered.push(node.id)
 
-    registry.target = target
-    registry.self = await scanSelf()
-    await spacer()
+      if (await tryGetAccess(node)) {
+        registry.exploited.push(node.id)
 
-    for (const node of await scanNetwork()) {
-      if ((await tryGetAccess(node)) && node.needsPayloadUpdate) {
-        await deliverPayload(node)
+        if (node.needsPayloadUpdate) {
+          await deliverPayload(node)
+        }
       }
-      await ns.sleep(0.25 * SECONDS)
+      await ns.sleep(1)
     }
 
-    ns.print(`Done. (rerun in 12)`)
+    // Recursive
+    for (const node of network) {
+      await exploitNetwork(node.id)
+    }
+  }
+
+  const run = async (target) => {
+    registry.target = target
+    registry.self = await scanSelf()
+    registry.discovered = []
+    registry.exploited = []
+    registry.hasNewNodes = registry.isInitialRun || false
+
+    // Get access to target first
+    while (!(await tryGetAccess(getNode(registry.target)))) {
+      ns.clearLog()
+      ns.print(`Running...`)
+      ns.print(`Unable to attain access to ${registry.target}...`)
+      ns.print(`No payloads will be deployed. Retrying every second...`)
+      await ns.sleep(1000)
+    }
+
+    // Exploit network and attack target
+    await exploitNetwork()
+
+    if (registry.hasNewNodes) {
+      ns.print(`Exploited ${registry.exploited.length}/${registry.discovered.length} nodes.`)
+    }
+
+    registry.isInitialRun = false
     await ns.sleep(12 * SECONDS)
   }
 
@@ -152,9 +159,10 @@ export async function main(ns) {
   await configure(ns)
   await window(ns, 3, 0, 2)
 
-  const target = ns.args[0] || 'harakiri-sushi'
+  const target = ns.args[0]
   const worm = createWorm(ns)
 
+  ns.print(`Running...`)
   while (true) {
     await worm.run(target)
     await ns.sleep(1000)

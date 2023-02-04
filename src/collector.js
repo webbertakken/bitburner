@@ -15,16 +15,16 @@ export async function main(ns) {
     const ramMaxThreads = await getMaxThreads(ns, ramNeededForHack)
     const maxThreads = Math.min(scriptThreads, ramMaxThreads)
     const max = ns.getServerMaxMoney(target)
-    const half = max / 2
+    const portionToHack = (max / 5) * 4
     const trigger = max / 10
 
     ns.clearLog()
-    ns.print(`Waiting for server to have more than half of maximum moneys...`)
+    ns.print(`Waiting for server to have the portion to hack available...`)
 
     let current = ns.getServerMoneyAvailable(target)
-    if (current >= half) {
+    if (current >= portionToHack) {
       // Measure threads needed to take half
-      let threads = Math.ceil(ns.hackAnalyzeThreads(target, half))
+      let threads = Math.ceil(ns.hackAnalyzeThreads(target, portionToHack))
 
       // Money is already gone
       if (threads <= 0) continue
