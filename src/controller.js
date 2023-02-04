@@ -54,7 +54,7 @@ export async function main(ns) {
   const f = getFormatters(ns)
 
   await configure(ns)
-  await window(ns, 1, 1, 2)
+  await window(ns, 1, 1)
 
   ns.print('Running...')
 

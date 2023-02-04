@@ -50,6 +50,7 @@ export const configure = async (ns) => {
   ns.disableLog('scan')
   ns.disableLog('scp')
   ns.disableLog('nuke')
+  ns.disableLog('killall')
 }
 
 /** @param {NS} ns */

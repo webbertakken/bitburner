@@ -3,16 +3,17 @@ const fillAllocation = async (ns, script, utilisation = 1) => {
 
   // Calculate threads
   const self = ns.getHostname()
-  const free = ns.getServerMaxRam(self) - ns.getServerUsedRam(self)
-  const cost = ns.getScriptRam(scriptName)
-  const poolSize = 50
-  const threads = Math.floor(free / cost) * utilisation
+  const maxRam = ns.getServerMaxRam(self)
+  const usedRam = ns.getServerUsedRam(self)
+  const freeRam = maxRam - usedRam
+  const scriptCost = ns.getScriptRam(scriptName)
+  const poolSize = Math.max(50, maxRam / 18)
+  const threads = Math.floor(freeRam / scriptCost) * utilisation
 
-  // Spawn full pools with 50 threads
+  // Spawn full pools of threads
   const numInstances = Math.floor(threads / poolSize)
   for (let i = 0; i < numInstances; i++) {
     ns.run(scriptName, poolSize, ...[...args, i])
-    await ns.sleep(500)
   }
 
   // Spawn remaining threads

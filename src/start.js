@@ -1,4 +1,4 @@
-import { window, configure, createApp } from './app'
+import { createApp } from './app'
 
 /** @param {NS} ns */
 export async function main(ns) {
@@ -20,7 +20,7 @@ export async function main(ns) {
   // Strategy
   const milestones = [
     {
-      goal: 'get hacking level 100',
+      goal: 'get hacking level 150',
       target: 'n00dles',
       achieved: () => ns.getHackingLevel() >= 150,
     },

@@ -95,11 +95,13 @@ const createWorm = (ns) => {
     // Run script
     ns.disableLog('killall')
     ns.killall(host)
-    ns.print('stopping all processes...')
     await ns.sleep(1000)
-
     const { remoteScript } = scripts.find(({ init }) => init)
-    ns.exec(remoteScript, host, 1, registry.target)
+    ns.disableLog('exec')
+    if (ns.exec(remoteScript, host, 1, registry.target) === 0) {
+      ns.print(`Failed to run ${remoteScript} on ${host}`)
+      throw new Error(`Failed to run ${remoteScript} on ${host}`)
+    }
   }
 
   const exploitNetwork = async (nodeId = registry.self.id) => {
