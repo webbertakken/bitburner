@@ -1,9 +1,9 @@
-import { window, configure, createApp } from './utils/index.js'
+import { window, configure, createApp } from './app'
 
 /** @param {NS} ns */
 export async function main(ns) {
   const app = await createApp(ns)
-  await app.createWindow(0)
+  await app.window(0)
 
   ns.clearLog()
 

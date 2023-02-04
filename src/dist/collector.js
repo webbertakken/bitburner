@@ -1,4 +1,4 @@
-import { window, configure, getMaxThreads, getFormatters } from './utils/index.js'
+import { window, configure, getMaxThreads, getFormatters } from '/app.js'
 
 const ramNeededForHack = 0.1
 

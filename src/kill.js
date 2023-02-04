@@ -1,4 +1,4 @@
-import { window, configure } from './utils/index.js'
+import { window, configure } from './app'
 
 /** @param {NS} ns */
 export async function main(ns) {
@@ -10,7 +10,10 @@ export async function main(ns) {
   // Close all windows
 
   const { pid: thisPid } = ns.getRunningScript()
-  const pids = ns.ps().filter(x => x.pid !== thisPid && x.filename !== 'start.js').map(x => x.pid)
+  const pids = ns
+    .ps()
+    .filter((x) => x.pid !== thisPid && x.filename !== 'start.js')
+    .map((x) => x.pid)
 
   ns.disableLog('kill')
   ns.print(`Killing ${pids.length} processes...`)

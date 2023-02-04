@@ -1,9 +1,9 @@
-import { configure, getNodeInfo, window } from './utils/index.js'
+import { configure, createApp, getNodeInfo } from './app'
 
 /** @param {NS} ns */
 export async function main(ns) {
-  await configure(ns)
-  await window(ns, 1, 0, 2)
+  const app = await createApp(ns)
+  await app.window(1, 0, 2)
 
   const target = ns.args[0]
   const node = getNodeInfo(ns, target)
@@ -44,6 +44,6 @@ export async function main(ns) {
     )
     ns.print('\n')
 
-    await ns.sleep(1000)
+    await ns.sleep(100)
   }
 }

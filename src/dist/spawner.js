@@ -9,7 +9,10 @@ const fillAllocation = async (ns, script, utilisation = 1) => {
 
   // Spawn full pools with 50 threads
   const numInstances = Math.floor(threads / 50)
-  for (let i = 0; i < numInstances; i++) ns.run(scriptName, 50, ...[...args, i])
+  for (let i = 0; i < numInstances; i++) {
+    ns.run(scriptName, 50, ...[...args, i])
+    await ns.sleep(500)
+  }
 
   // Spawn remaining threads
   const instanceRest = threads % 50
@@ -19,7 +22,7 @@ const fillAllocation = async (ns, script, utilisation = 1) => {
 /** @param {NS} ns */
 export async function main(ns) {
   const self = ns.getHostname()
-  const target = ns.args[0] || 'harakiri-sushi'
+  const target = ns.args[0]
 
   if (ns.getServerMaxRam(self) > 500) {
     ns.run('collector.js', 200, target)

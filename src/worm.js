@@ -1,4 +1,4 @@
-import { window, configure, getNodeInfo } from './utils/index.js'
+import { window, configure, getNodeInfo } from './app'
 
 const SECONDS = 1000
 
@@ -82,8 +82,8 @@ const createWorm = (ns) => {
       { script: '/dist/weaken.js', remoteScript: 'weaken.js' },
       { script: '/dist/grow.js', remoteScript: 'grow.js' },
       { script: '/dist/spawner.js', remoteScript: 'spawner.js', init: true },
-      { script: '/utils/index.js', remoteScript: '/utils/index.js' },
-      { script: 'collector.js', remoteScript: 'collector.js' },
+      { script: '/dist/app.js', remoteScript: 'app.js' },
+      { script: '/dist/collector.js', remoteScript: 'collector.js' },
     ]
 
     for (const { script, remoteScript } of scripts) {
@@ -96,7 +96,7 @@ const createWorm = (ns) => {
     ns.disableLog('killall')
     ns.killall(host)
     ns.print('stopping all processes...')
-    await ns.sleep(100)
+    await ns.sleep(1000)
 
     const { remoteScript } = scripts.find(({ init }) => init)
     ns.exec(remoteScript, host, 1, registry.target)

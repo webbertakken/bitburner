@@ -51,6 +51,13 @@ export const configure = async (ns) => {
   ns.disableLog('scp')
 }
 
+/** @param {NS} ns */
+export const getFormatters = (ns) => ({
+  money: (amount) => `${ns.nFormat(amount, '$0.00a')}`.toUpperCase(),
+  number: (amount) => ns.nFormat(amount, '0.00'),
+  percentage: (amount) => ns.nFormat(amount, '0.00%'),
+})
+
 export const createApp = async (ns) => {
   await configure(ns)
 
@@ -70,7 +77,7 @@ export const createApp = async (ns) => {
       return pid
     },
     sleep: async (ms) => ns.sleep(ms),
-    createWindow: async (row, col, rowSpan) => await window(ns, row, col, rowSpan),
+    window: async (row, col, rowSpan) => await window(ns, row, col, rowSpan),
   }
 }
 
@@ -88,13 +95,6 @@ export const getMaxThreads = async (ns, scriptNameOrRamAmount, saveGb = 0) => {
 
   return Math.floor(free / cost)
 }
-
-/** @param {NS} ns */
-export const getFormatters = (ns) => ({
-  money: (amount) => `${ns.nFormat(amount, '$0.00a')}`.toUpperCase(),
-  number: (amount) => ns.nFormat(amount, '0.00'),
-  percentage: (amount) => ns.nFormat(amount, '0.00%'),
-})
 
 /** @param {NS} ns */
 export const getNodeInfo = (ns, nodeId) => {

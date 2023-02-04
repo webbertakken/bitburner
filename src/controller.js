@@ -1,4 +1,4 @@
-import { configure, window, getFormatters } from './utils/index.js'
+import { configure, window, getFormatters } from './app'
 
 const unlocks = async (ns) => {
   const f = getFormatters(ns)

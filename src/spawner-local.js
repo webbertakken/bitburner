@@ -1,11 +1,11 @@
-import { window, configure, getMaxThreads } from './utils/index.js'
+import { window, configure, getMaxThreads } from './app'
 
 const threadsToHack = 200
 
 const fillAllocation = async (ns, scriptWithArgs, utilisation = 1) => {
   const [script, ...args] = scriptWithArgs
 
-  ns.tprint(`Spawning ${script} ${args.join(' ')} with ${utilisation * 100}% utilisation`)
+  ns.print(`Spawning ${script} ${args.join(' ')} with ${utilisation * 100}% utilisation`)
 
   // Calculate threads
   const maxThreads = await getMaxThreads(ns, script, 20)
@@ -29,7 +29,7 @@ const fillAllocation = async (ns, scriptWithArgs, utilisation = 1) => {
 
 /** @param {NS} ns */
 const spawnCollector = async (ns, target) => {
-  ns.run('collector.js', threadsToHack, target)
+  ns.run('/dist/collector.js', threadsToHack, target)
 }
 
 /** @param {NS} ns */
