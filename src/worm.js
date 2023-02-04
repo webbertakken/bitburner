@@ -14,26 +14,36 @@ const createWorm = (ns) => {
   const scanNetwork = async () => {
     return ns
       .scan()
-      .map((node) => ({
-        id: node,
-        securityLevel: ns.getServerSecurityLevel(node),
-        minSecurityLevel: ns.getServerMinSecurityLevel(node),
-        reqHackingLevel: ns.getServerRequiredHackingLevel(node),
-        reqPorts: ns.getServerNumPortsRequired(node),
-        moneys: ns.getServerMoneyAvailable(node),
-        formattedMoneys: ns.nFormat(ns.getServerMoneyAvailable(node), '(0.00 a)'),
-        maxMoneys: ns.getServerMaxMoney(node),
-        formattedMaxMoneys: ns.nFormat(ns.getServerMaxMoney(node), '(0.00 a)'),
-        growth: ns.getServerGrowth(node),
-        maxRam: ns.getServerMaxRam(node),
-        usedRam: ns.getServerUsedRam(node),
-        weakenTime: ns.getWeakenTime(node),
-        growTime: ns.getGrowTime(node),
-        hackTime: ns.getHackTime(node),
-        hackChance: ns.hackAnalyzeChance(node),
-        formattedHackTime: ns.nFormat(ns.getHackTime(node) / 1000, '(MM:ss)'),
-        hasRootAccess: ns.hasRootAccess(node),
-      }))
+      .map((node) => {
+        const maxRam = ns.getServerMaxRam(node)
+        const usedRam = ns.getServerUsedRam(node)
+
+        // Utilised more than 60% of RAM
+        // Accurate enough for both small server with little RAM  and big servers that double in size
+        let needsPayloadUpdate = maxRam >= 8 && usedRam / maxRam <= 0.6
+
+        return {
+          id: node,
+          securityLevel: ns.getServerSecurityLevel(node),
+          minSecurityLevel: ns.getServerMinSecurityLevel(node),
+          reqHackingLevel: ns.getServerRequiredHackingLevel(node),
+          reqPorts: ns.getServerNumPortsRequired(node),
+          moneys: ns.getServerMoneyAvailable(node),
+          formattedMoneys: ns.nFormat(ns.getServerMoneyAvailable(node), '(0.00 a)'),
+          maxMoneys: ns.getServerMaxMoney(node),
+          formattedMaxMoneys: ns.nFormat(ns.getServerMaxMoney(node), '(0.00 a)'),
+          growth: ns.getServerGrowth(node),
+          maxRam,
+          usedRam,
+          needsPayloadUpdate,
+          weakenTime: ns.getWeakenTime(node),
+          growTime: ns.getGrowTime(node),
+          hackTime: ns.getHackTime(node),
+          hackChance: ns.hackAnalyzeChance(node),
+          formattedHackTime: ns.nFormat(ns.getHackTime(node) / 1000, '(MM:ss)'),
+          hasRootAccess: ns.hasRootAccess(node),
+        }
+      })
       .sort((a, b) => a.securityLevel - b.securityLevel)
   }
 
@@ -85,6 +95,7 @@ const createWorm = (ns) => {
 
   const deliverPayload = async (node) => {
     const { id: host } = node
+
     const self = ns.getHostname()
 
     ns.print('\n')
@@ -123,7 +134,7 @@ const createWorm = (ns) => {
     await spacer()
 
     for (const node of await scanNetwork()) {
-      if (await tryGetAccess(node)) {
+      if ((await tryGetAccess(node)) && node.needsPayloadUpdate) {
         await deliverPayload(node)
       }
       await ns.sleep(0.25 * SECONDS)

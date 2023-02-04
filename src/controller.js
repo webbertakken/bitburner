@@ -1,5 +1,17 @@
 import { configure, window, getFormatters } from './utils/index.js'
 
+const unlocks = async (ns) => {
+  const f = getFormatters(ns)
+
+  const myMoney = ns.getPlayer().money
+
+  if (myMoney >= 200_000) {
+    // Requires This singularity function requires Source-File 4 to run. A power up you obtain later in the game.
+    // ns.hasTorRouter() || ns.print(`Buying Tor Router for ${f.money(200_000)}...`)
+    // ns.singularity.purchaseTor()
+  }
+}
+
 const hardware = async (ns) => {
   const f = getFormatters(ns)
 
@@ -53,6 +65,7 @@ export async function main(ns) {
   }
 
   while (true) {
+    await unlocks(ns)
     await hardware(ns)
     await ns.sleep(1000)
   }
