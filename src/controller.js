@@ -12,12 +12,13 @@ const unlocks = async (app, ns) => {
   }
 }
 
-const hardware = async (app, ns) => {
+const hardware = async (app, ns, maxSpendingMode) => {
   const f = app.formatters
 
   // Calculate spending
   const myMoney = ns.getPlayer().money
-  const maxSpendingPerItem = myMoney * 0.01
+  const spendingMultiplier = maxSpendingMode ? 0.95 : 0.01
+  const maxSpendingPerItem = myMoney * spendingMultiplier
   const maxServers = ns.getPurchasedServerLimit()
   const numPurchasedServers = ns.getPurchasedServers().length
 
@@ -36,7 +37,7 @@ const hardware = async (app, ns) => {
   }
 
   // Then upgrade the servers when affordable
-  ns.getPurchasedServers().forEach((hostname) => {
+  for (const hostname of ns.getPurchasedServers()) {
     const ram = ns.getServerMaxRam(hostname)
     const nextPower = Math.log2(ram) + 1
     const nextRam = Math.pow(2, nextPower)
@@ -44,9 +45,9 @@ const hardware = async (app, ns) => {
     if (nextCost <= maxSpendingPerItem) {
       ns.print(`⏩ Upgrading "${hostname}" to ${nextRam}GB for ${f.money(nextCost)}...`)
       ns.upgradePurchasedServer(hostname, nextRam)
-      return
+      break
     }
-  })
+  }
 }
 
 /** @param {NS} ns */
@@ -54,6 +55,8 @@ export async function main(ns) {
   const app = await createApp(ns)
   await app.window(1, 1)
   const f = app.formatters
+
+  const [maxSpendingMode = false] = ns.args
 
   // Show all prices once
   ns.print('Purchased server costs:')
@@ -67,8 +70,8 @@ export async function main(ns) {
   ns.print('🏃 Running...')
 
   while (true) {
-    await unlocks(app, ns)
-    await hardware(app, ns)
+    await unlocks(app, ns, maxSpendingMode)
+    await hardware(app, ns, maxSpendingMode)
     await ns.sleep(1000)
   }
 }
