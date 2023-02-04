@@ -49,6 +49,7 @@ export const configure = async (ns) => {
   ns.disableLog('sqlinject')
   ns.disableLog('scan')
   ns.disableLog('scp')
+  ns.disableLog('nuke')
 }
 
 /** @param {NS} ns */

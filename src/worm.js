@@ -82,7 +82,7 @@ const createWorm = (ns) => {
       { script: '/dist/weaken.js', remoteScript: 'weaken.js' },
       { script: '/dist/grow.js', remoteScript: 'grow.js' },
       { script: '/dist/spawner.js', remoteScript: 'spawner.js', init: true },
-      { script: '/dist/app.js', remoteScript: 'app.js' },
+      { script: 'app.js', remoteScript: 'app.js' },
       { script: '/dist/collector.js', remoteScript: 'collector.js' },
     ]
 
