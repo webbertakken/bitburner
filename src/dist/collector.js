@@ -1,25 +1,26 @@
-import { window, configure, getMaxThreads, getFormatters } from '/app.js'
+import { createApp } from '/app'
 
 const ramNeededForHack = 0.1
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const target = ns.args[0]
-  const f = getFormatters(ns)
+  const app = await createApp(ns)
+  const f = app.formatters
 
-  await configure(ns)
-  if (ns.getHostname() === 'home') await window(ns, 6)
+  const target = ns.args[0]
+
+  if (ns.getHostname() === 'home') await app.window(6)
 
   while (true) {
     const { threads: scriptThreads } = ns.getRunningScript()
-    const ramMaxThreads = await getMaxThreads(ns, ramNeededForHack)
+    const ramMaxThreads = await app.getMaxThreads(ramNeededForHack)
     const maxThreads = Math.min(scriptThreads, ramMaxThreads)
     const max = ns.getServerMaxMoney(target)
     const portionToHack = (max / 5) * 4
     const trigger = max / 10
 
     ns.clearLog()
-    ns.print(`Waiting for server to have the portion to hack available...`)
+    ns.print(`⏳ Waiting for server to have the portion to hack available...`)
 
     let current = ns.getServerMoneyAvailable(target)
     if (current >= portionToHack) {
@@ -31,7 +32,7 @@ export async function main(ns) {
 
       // Not enough threads available
       if (threads > maxThreads) {
-        ns.print(`WARNING: Not enough threads (need: ${threads} / max: ${maxThreads}).`)
+        ns.print(`⚠️ Not enough threads (need: ${threads} / max: ${maxThreads}).`)
         threads = maxThreads
       }
 
@@ -46,9 +47,9 @@ export async function main(ns) {
           await ns.sleep(1500)
         } else {
           ns.print(
-            `Waiting for money to reach ${f.money(trigger)}. Current: ${f.money(current)}/${f.money(
-              max,
-            )}`,
+            `⏳ Waiting for money to reach ${f.money(trigger)}. Current: ${f.money(
+              current,
+            )}/${f.money(max)}`,
           )
         }
 

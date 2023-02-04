@@ -1,7 +1,7 @@
-import { configure, window, getFormatters } from './app'
+import { createApp } from './app'
 
-const hacknet = async (ns) => {
-  const f = getFormatters(ns)
+const hacknet = async (app, ns) => {
+  const f = app.formatters
   const h = ns.hacknet
 
   const myMoney = ns.getPlayer().money
@@ -11,7 +11,7 @@ const hacknet = async (ns) => {
   if (h.numNodes() < h.maxNumNodes()) {
     const newNodeCost = h.getPurchaseNodeCost()
     if (newNodeCost < 10e6 && newNodeCost < maxSpendingPerItem) {
-      ns.print(`Buying new node (${h.numNodes()}) for ${f.money(newNodeCost)}...`)
+      ns.print(`🆕 Buying new node (${h.numNodes()}) for ${f.money(newNodeCost)}...`)
       h.purchaseNode()
       return
     }
@@ -32,7 +32,7 @@ const hacknet = async (ns) => {
   // Upgrade ram
   const cheapestRamUpgradeNode = nodes.sort((a, b) => a.ramUpgradeCost - b.ramUpgradeCost)[0]
   if (cheapestRamUpgradeNode.ramUpgradeCost < maxSpendingPerItem) {
-    ns.print(`Upgrading ram for ${f.money(cheapestRamUpgradeNode.ramUpgradeCost)}...`)
+    ns.print(`⬆️🐏 Upgrading ram for ${f.money(cheapestRamUpgradeNode.ramUpgradeCost)}...`)
     h.upgradeRam(cheapestRamUpgradeNode.id, 1)
     return
   }
@@ -40,7 +40,9 @@ const hacknet = async (ns) => {
   // Upgrade level
   const cheapestLevelUpgradeNode = nodes.sort((a, b) => a.levelUpgradeCost - b.levelUpgradeCost)[0]
   if (cheapestLevelUpgradeNode.levelUpgradeCost < maxSpendingPerItem) {
-    ns.print(`Upgrading 10 levels for ${f.money(cheapestLevelUpgradeNode.levelUpgradeCost)}...`)
+    ns.print(
+      `⬆️🎚️ Upgrading 10 levels for ${f.money(cheapestLevelUpgradeNode.levelUpgradeCost)}...`,
+    )
     h.upgradeLevel(cheapestLevelUpgradeNode.id, 10)
     return
   }
@@ -48,7 +50,7 @@ const hacknet = async (ns) => {
   // Upgrade core
   const cheapestCoreUpgradeNode = nodes.sort((a, b) => a.coreUpgradeCost - b.coreUpgradeCost)[0]
   if (cheapestCoreUpgradeNode.coreUpgradeCost < maxSpendingPerItem) {
-    ns.print(`Upgrading core for ${f.money(cheapestCoreUpgradeNode.coreUpgradeCost)}...`)
+    ns.print(`⬆️🧠 Upgrading core for ${f.money(cheapestCoreUpgradeNode.coreUpgradeCost)}...`)
     h.upgradeCore(cheapestCoreUpgradeNode.id, 1)
     return
   }
@@ -56,13 +58,13 @@ const hacknet = async (ns) => {
 
 /** @param {NS} ns */
 export async function main(ns) {
-  await configure(ns)
-  await window(ns, 0, 1)
+  const app = await createApp(ns)
+  await app.window(0, 1)
 
-  ns.print('Running...')
+  ns.print('🏃 Running...')
 
   while (true) {
-    await hacknet(ns)
+    await hacknet(app, ns)
     await ns.sleep(1000)
   }
 }

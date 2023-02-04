@@ -1,49 +1,42 @@
-import { configure, createApp, getNodeInfo } from './app'
+import { createApp } from './app'
 
 /** @param {NS} ns */
 export async function main(ns) {
   const app = await createApp(ns)
-  await app.window(1, 0, 2)
+  await app.window(1)
+  const f = app.formatters
 
-  const target = ns.args[0]
-  const node = getNodeInfo(ns, target)
+  const [target] = ns.args
+  const node = app.getNodeInfo(target)
 
   while (true) {
     ns.clearLog()
-    ns.print(
-      `${node.id} (security: ${ns.getServerSecurityLevel(node.id)}/${ns.getServerMinSecurityLevel(
-        node.id,
-      )}, moneys ${ns.nFormat(ns.getServerMoneyAvailable(node.id), '($0,00 a)')}/${ns.nFormat(
-        ns.getServerMaxMoney(node.id),
-        '($0,00 a)',
-      )}`,
-    )
-    ns.print('\n')
-    ns.print(`weaken time: ${ns.tFormat(ns.getWeakenTime(node.id))}`)
-    ns.print(`weaken effect: ${ns.weakenAnalyze(1, 1)} [x10: ${ns.weakenAnalyze(10, 1)}]`)
-    ns.print('\n')
-    ns.print(`hack time: ${ns.tFormat(ns.getHackTime(node.id))}`)
-    ns.print(`hack effect: ${ns.tFormat(ns.hackAnalyze(node.id))}`)
-    ns.print(`hack chance: ${ns.hackAnalyzeChance(node.id)}`)
-    ns.print(
-      `hack security effect: ${ns.hackAnalyzeSecurity(
-        1,
-        node.id,
-      )} times 10: ${ns.hackAnalyzeSecurity(10, node.id)}`,
-    )
-    ns.print('\n')
-    ns.print(`grow time: ${ns.tFormat(ns.getGrowTime(node.id))}`)
-    ns.print(`grow effect: ${ns.growthAnalyze(node.id, 1.1, 1)}`)
-    ns.print(
-      `grow security effect: ${ns.growthAnalyzeSecurity(
-        1,
-        node.id,
-      )} times 10: ${ns.growthAnalyzeSecurity(10, node.id)} times${Math.round(
-        ns.growthAnalyze(node.id, 1.1, 1),
-      )}: ${ns.growthAnalyzeSecurity(Math.round(ns.growthAnalyze(node.id, 1.1, 1)), node.id)}`,
-    )
-    ns.print('\n')
 
-    await ns.sleep(100)
+    // Apps
+    ns.print(
+      `🖥️ Apps available:
+      ${ns.fileExists('BruteSSH.exe') ? '✅' : '❌'} ssh ` +
+        `${ns.fileExists('FTPCrack.exe') ? '✅' : '❌'} ftp ` +
+        `${ns.fileExists('relaySMTP.exe') ? '✅' : '❌'} smtp ` +
+        `${ns.fileExists('HTTPWorm.exe') ? '✅' : '❌'} http ` +
+        `${ns.fileExists('SQLInject.exe') ? '✅' : '❌'} sql
+      `,
+    )
+
+    // Target
+    const targetMoney = f.money(ns.getServerMoneyAvailable(node.id))
+    const targetMaxMoney = f.money(ns.getServerMaxMoney(node.id))
+    const targetSecurity = f.number(ns.getServerSecurityLevel(node.id))
+    const targetMinSecurity = f.number(ns.getServerMinSecurityLevel(node.id))
+    const targetHackTime = f.time(ns.getHackTime(node.id))
+    ns.print(
+      `🎯 Current target: ${node.id}
+      moneys ${targetMoney}/${targetMaxMoney}
+      security: ${targetSecurity}/${targetMinSecurity}
+      hack time: ${targetHackTime}
+      `,
+    )
+
+    await ns.sleep(350)
   }
 }

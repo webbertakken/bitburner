@@ -1,7 +1,7 @@
-import { configure, window, getFormatters } from './app'
+import { createApp } from './app'
 
-const unlocks = async (ns) => {
-  const f = getFormatters(ns)
+const unlocks = async (app, ns) => {
+  const f = app.formatters
 
   const myMoney = ns.getPlayer().money
 
@@ -12,8 +12,8 @@ const unlocks = async (ns) => {
   }
 }
 
-const hardware = async (ns) => {
-  const f = getFormatters(ns)
+const hardware = async (app, ns) => {
+  const f = app.formatters
 
   // Calculate spending
   const myMoney = ns.getPlayer().money
@@ -28,7 +28,7 @@ const hardware = async (ns) => {
     if (newServerCost < maxSpendingPerItem || (newServerCost <= 100e6 && myMoney >= 100e6)) {
       const nextId = ns.getPurchasedServers().length % maxServers
       const hostname = `webber${nextId}`
-      ns.print(`Buying new server "${hostname}" for ${f.money(newServerCost)}...`)
+      ns.print(`🆕 Buying new server "${hostname}" for ${f.money(newServerCost)}...`)
       ns.purchaseServer(hostname, scale)
     }
 
@@ -42,7 +42,7 @@ const hardware = async (ns) => {
     const nextRam = Math.pow(2, nextPower)
     const nextCost = ns.getPurchasedServerUpgradeCost(hostname, nextRam)
     if (nextCost <= maxSpendingPerItem) {
-      ns.print(`Upgrading "${hostname}" to ${nextRam}GB for ${f.money(nextCost)}...`)
+      ns.print(`⏩ Upgrading "${hostname}" to ${nextRam}GB for ${f.money(nextCost)}...`)
       ns.upgradePurchasedServer(hostname, nextRam)
       return
     }
@@ -51,22 +51,24 @@ const hardware = async (ns) => {
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const f = getFormatters(ns)
-
-  await configure(ns)
-  await window(ns, 1, 1)
-
-  ns.print('Running...')
+  const app = await createApp(ns)
+  await app.window(1, 1)
+  const f = app.formatters
 
   // Show all prices once
+  ns.print('Purchased server costs:')
+  ns.print('-----------------------')
   for (const scale of [Math.pow(2, 10), Math.pow(2, 14), Math.pow(2, 16)]) {
     const cost = ns.getPurchasedServerCost(scale)
-    ns.print(`Cost for ${scale}GB: ${f.money(cost)}`)
+    ns.print(`🖥️ Server with ${scale}GB: ${f.money(cost)}`)
   }
+  ns.print('-----------------------')
+  ns.print('\n')
+  ns.print('🏃 Running...')
 
   while (true) {
-    await unlocks(ns)
-    await hardware(ns)
+    await unlocks(app, ns)
+    await hardware(app, ns)
     await ns.sleep(1000)
   }
 }

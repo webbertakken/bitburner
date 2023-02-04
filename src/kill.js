@@ -1,22 +1,19 @@
-import { window, configure } from './app'
+import { createApp } from './app'
 
 /** @param {NS} ns */
 export async function main(ns) {
-  // Tail own window
-  await configure(ns)
-  await window(ns, 1, 0, 2)
+  const app = await createApp(ns)
+  await app.window(1)
   ns.clearLog()
 
   // Close all windows
-
   const { pid: thisPid } = ns.getRunningScript()
   const pids = ns
     .ps()
     .filter((x) => x.pid !== thisPid && x.filename !== 'start.js')
     .map((x) => x.pid)
 
-  ns.disableLog('kill')
-  ns.print(`Killing ${pids.length} processes...`)
+  ns.print(`😵 Killing ${pids.length} processes...`)
 
   for (const pid of pids) {
     ns.closeTail(pid)

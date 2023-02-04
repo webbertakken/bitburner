@@ -10,7 +10,7 @@ export async function main(ns) {
   // Notify
   const tryNotifyAchieved = async (milestone) => {
     if (await milestone.achieved()) {
-      console.log(`🎉 Milestone achieved.\n\n`)
+      ns.print(`🎉 Milestone achieved.\n\n`)
       return true
     }
 
@@ -34,23 +34,23 @@ export async function main(ns) {
   // Run milestones
   for (const milestone of milestones) {
     const { goal, target } = milestone
-    console.log(`🚀 Running milestone: ${goal}`)
-    console.log(`🖥️ Target: ${target}`)
+    ns.print(`🚀 Running milestone: ${goal}`)
+    ns.print(`🖥️ Target: ${target}`)
 
     // Check if milestone is already achieved
     if (await tryNotifyAchieved(milestone)) continue
-    console.log(`🏃 Running scripts...`)
+    ns.print(`🏃 Running scripts...`)
 
     // Kill everything
     app.run('kill.js')
-    await app.sleep(2000)
+    await ns.sleep(2000)
 
     // Run home scripts.
-    app.run('worm.js', 1, target)
     app.run('monitor.js', 1, target)
     app.run('farmer.js', 1)
     app.run('controller.js', 1)
     app.run('spawner-local.js', 1, target)
+    app.run('worm.js', 1, target)
 
     // Wait for milestone to be achieved
     while (!(await tryNotifyAchieved(milestone))) {
