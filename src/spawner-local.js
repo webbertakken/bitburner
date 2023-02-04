@@ -9,7 +9,7 @@ const fillAllocation = async (ns, script, utilisation = 1) => {
 
   // Spawn most instances
   const instanceNum = Math.floor(threads / 50)
-  for (let i = 0; i < instanceNum ; i++) {
+  for (let i = 0; i < instanceNum; i++) {
     ns.run(script, 50)
   }
 
@@ -24,7 +24,7 @@ const fillAllocation = async (ns, script, utilisation = 1) => {
 
 /** @param {NS} ns */
 const spawnCollector = async (ns, target) => {
-  ns.run('spawn-collector.js', threadsToHack, target)
+  ns.run('collector.js', threadsToHack, target)
 }
 
 /** @param {NS} ns */
@@ -32,15 +32,14 @@ export async function main(ns) {
   const target = 'harakiri-sushi'
 
   await configure(ns)
-  await window(ns, 4)
+  await window(ns, 5)
 
   // never utilise 100% because it causes trouble when reloading a script that because bigger
   await spawnCollector(ns, target)
   await fillAllocation(ns, '/dist/grow.js', 0.7)
-  await fillAllocation(ns, '/dist/weaken.js', 0.90)
+  await fillAllocation(ns, '/dist/weaken.js', 0.9)
 
-
-  while(true) {
+  while (true) {
     await ns.sleep(1000)
   }
 }

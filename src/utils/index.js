@@ -41,6 +41,11 @@ export const configure = async (ns) => {
   ns.disableLog('getHackTime')
   ns.disableLog('weakenAnalyze')
   ns.disableLog('getWeakenTime')
+  ns.disableLog('brutessh')
+  ns.disableLog('httpworm')
+  ns.disableLog('ftpcrack')
+  ns.disableLog('relaysmtp')
+  ns.disableLog('sqlinject')
 }
 
 /** @param {NS} ns */

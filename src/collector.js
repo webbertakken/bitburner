@@ -8,7 +8,7 @@ export async function main(ns) {
   const f = getFormatters(ns)
 
   await configure(ns)
-  await window(ns, 5)
+  if (ns.getHostname() === 'home') await window(ns, 6)
 
   while (true) {
     const { threads: scriptThreads } = ns.getRunningScript()

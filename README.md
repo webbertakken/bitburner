@@ -10,9 +10,9 @@ It will open terminals for:
 
 - The bootstrapper (start.js)
 - Monitor (monitor.js) - this will indicate what's going on in the game.
-- Nuker (nuker.js) - auto discovers nodes on the internet and will attempt to add them to your botnet.
+- Worm (worm.js) - auto discovers nodes on the internet and will attempt to add them to your botnet.
 - Spawner (spawner-local.js) - will fully utilise any resources on the home machine.
-- Collector (spawn-collector.js) - will collect money from your servers.
+- Collector (collector.js) - will collect money from your servers.
 - Controller (rent-stuff.js) - will use your money to rent and upgrade servers to run workloads and grow your botnet. 
 
 ## Setup

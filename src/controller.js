@@ -15,7 +15,7 @@ const hardware = async (ns) => {
     const newServerCost = ns.getPurchasedServerCost(scale)
     if (newServerCost < maxSpendingPerItem) {
       const nextId = ns.getPurchasedServers().length % maxServers
-      const hostname = `small${nextId}`
+      const hostname = `webber${nextId}`
       ns.print(`Buying new server "${hostname}" for ${f.money(newServerCost)}...`)
       ns.purchaseServer(hostname, scale)
     }
