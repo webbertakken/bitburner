@@ -72,7 +72,7 @@ const createWorm = (app, ns) => {
     const self = ns.getHostname()
 
     // Skip problematic hosts
-    const exclusions = ['CSEC', 'the-hub', 'zb-institute', 'solaris']
+    const exclusions = ['home', 'CSEC', 'the-hub', 'zb-institute', 'solaris', 'univ-energy']
     if (exclusions.includes(host)) return
 
     // Copy scripts

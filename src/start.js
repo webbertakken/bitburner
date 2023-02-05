@@ -28,14 +28,21 @@ export async function main(ns) {
     {
       goal: 'farm billions, get hacking level 500',
       target: 'harakiri-sushi',
-      achieved: () => false,
+      achieved: () => ns.getHackingLevel() >= 900,
       maxSpendingMode: true,
+    },
+    {
+      goal: 'spend everything on augments',
+      target: 'harakiri-sushi',
+      achieved: () => false,
+      maxSpendingMode: false,
+      savingMode: true,
     },
   ]
 
   // Run milestones
   for (const milestone of milestones) {
-    const { goal, target, maxSpendingMode } = milestone
+    const { goal, target, maxSpendingMode = false, savingMode = false } = milestone
     ns.print(`🚀 Running milestone: ${goal}`)
     ns.print(`🖥️ Target: ${target}`)
 
@@ -51,7 +58,7 @@ export async function main(ns) {
     app.run('monitor.js', 1, target)
     app.run('farmer.js', 1)
     app.run('controller.js', 1, maxSpendingMode)
-    app.run('spawner-local.js', 1, target)
+    app.run('spawner-local.js', 1, target, savingMode)
     app.run('worm.js', 1, target)
 
     // Wait for milestone to be achieved
