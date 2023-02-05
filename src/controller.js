@@ -38,12 +38,16 @@ const hardware = async (app, ns, maxSpendingMode) => {
   }
 
   // Then upgrade the servers when affordable
-  for (const hostname of ns.getPurchasedServers()) {
+  const servers = ns
+    .getPurchasedServers()
+    .sort((a, b) => ns.getServerMaxRam(a) - ns.getServerMaxRam(b))
+  for (const hostname of servers) {
     const ram = ns.getServerMaxRam(hostname)
     const nextPower = Math.log2(ram) + 1
     const nextRam = Math.pow(2, nextPower)
     const nextCost = ns.getPurchasedServerUpgradeCost(hostname, nextRam)
     if (nextCost <= maxSpendingPerItem) {
+      if (nextCost >= 1e9 && myMoney < 6e9 + nextCost) return // Keep at least 6B at some point
       ns.print(`⏩ Upgrading "${hostname}" to ${nextRam}GB for ${f.money(nextCost)}...`)
       ns.upgradePurchasedServer(hostname, nextRam)
       break
