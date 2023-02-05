@@ -18,24 +18,26 @@ export async function main(ns) {
     return false
   }
 
+  ns.nuke('n00dles')
+
   // Strategy
   const milestones = [
     {
       goal: 'get hacking level 150',
       target: 'n00dles',
-      achieved: () => ns.getHackingLevel() >= 150,
+      achieved: () => ns.getHackingLevel() >= 150 && ns.hasRootAccess('harakiri-sushi'),
       maxSpendingMode: true,
     },
     {
       goal: 'farm billions, get hacking level',
       target: 'harakiri-sushi',
-      achieved: () => ns.getHackingLevel() >= 400,
+      achieved: () => ns.getHackingLevel() >= 400 && ns.hasRootAccess('max-hardware'),
       maxSpendingMode: true,
     },
     {
       goal: 'farm many billions, get hacking level',
       target: 'max-hardware',
-      achieved: () => ns.getHackingLevel() >= 950,
+      achieved: () => ns.getHackingLevel() >= 950 && ns.hasRootAccess('zeus-med'),
       maxSpendingMode: true,
     },
     {
@@ -44,20 +46,33 @@ export async function main(ns) {
       target: 'zeus-med',
       achieved: () =>
         ns.getServerSecurityLevel('zeus-med') === ns.getServerMinSecurityLevel('zeus-med'),
+      // ns.getHackingLevel() >= 1112,
       maxSpendingMode: true,
     },
     {
-      goal: 'spend everything on augments',
+      goal: 'get to hacking level xxx while spending everything',
       target: 'zeus-med',
-      achieved: () => false,
-      maxSpendingMode: false,
-      savingMode: true,
+      achieved: () => false, // ns.getHackingLevel() >= 1112,
+      maxSpendingMode: true,
     },
+    // {
+    //   goal: 'weaken ecorp',
+    //   type: 'weaken',
+    //   target: 'ecorp',
+    //   achieved: () => ns.getServerSecurityLevel('ecorp') === ns.getServerMinSecurityLevel('ecorp'),
+    //   maxSpendingMode: false,
+    // },
+    // {
+    //   goal: 'farm ecorp, buy augments',
+    //   target: 'ecorp',
+    //   achieved: () => false,
+    //   maxSpendingMode: false,
+    // },
   ]
 
   // Run milestones
   for (const milestone of milestones) {
-    const { goal, target, type = 'none', maxSpendingMode = false, savingMode = false } = milestone
+    const { goal, target, type = 'none', maxSpendingMode = false } = milestone
     ns.print(`🚀 Running milestone: ${goal}`)
     ns.print(`🖥️ Target: ${target}`)
 
