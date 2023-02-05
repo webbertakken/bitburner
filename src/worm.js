@@ -1,4 +1,6 @@
-import { createApp } from './app'
+import { createApp } from '/core/app'
+import { getNodeInfo } from '/core/getNodeInfo'
+import { runRemote } from '/core/runRemote'
 
 const SECONDS = 1000
 
@@ -12,7 +14,7 @@ const createWorm = (app, ns) => {
     return ns
       .scan(host)
       .filter((nodeId) => !registry.discovered.includes(nodeId))
-      .map(app.getNodeInfo)
+      .map((nodeId) => getNodeInfo(ns, nodeId))
       .sort((a, b) => a.securityLevel - b.securityLevel)
   }
 
@@ -77,10 +79,13 @@ const createWorm = (app, ns) => {
 
     // Copy scripts
     const scripts = [
+      { script: '/core/app.js', remoteScript: '/core/app.js' },
+      { script: '/core/fillAllocation.js', remoteScript: '/core/fillAllocation.js' },
+      { script: '/core/getMaxThreads.js', remoteScript: '/core/getMaxThreads.js' },
+      { script: '/core/runLocal.js', remoteScript: '/core/runLocal.js' },
       { script: '/dist/weaken.js', remoteScript: 'weaken.js' },
       { script: '/dist/grow.js', remoteScript: 'grow.js' },
       { script: '/dist/spawner.js', remoteScript: 'spawner.js', init: true },
-      { script: 'app.js', remoteScript: 'app.js' },
       { script: '/dist/collector.js', remoteScript: 'collector.js' },
     ]
 
@@ -94,7 +99,7 @@ const createWorm = (app, ns) => {
     ns.killall(host)
     await ns.sleep(1000)
     const { remoteScript } = scripts.find(({ init }) => init)
-    app.runRemote(remoteScript, host, 1, registry.target)
+    runRemote(ns, remoteScript, host, 1, registry.target)
     ns.print(`📦 Deployed payload to ${host}`)
   }
 
@@ -129,7 +134,7 @@ const createWorm = (app, ns) => {
       registry.hasNewNodes = registry.isInitialRun || false
 
       // Get access to target first
-      while (!(await tryGetAccess(app.getNodeInfo(registry.target)))) {
+      while (!(await tryGetAccess(getNodeInfo(ns, registry.target)))) {
         ns.clearLog()
         ns.print(`🏃 Running...`)
         ns.print(`⚠️ Unable to attain access to ${registry.target}...`)

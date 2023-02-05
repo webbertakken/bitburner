@@ -1,4 +1,5 @@
-import { createApp } from '/app'
+import { createApp } from '/core/app'
+import { getMaxThreads } from '/core/getMaxThreads'
 
 const ramNeededForHack = 0.1
 
@@ -13,7 +14,7 @@ export async function main(ns) {
 
   while (true) {
     const { threads: scriptThreads } = ns.getRunningScript()
-    const ramMaxThreads = await app.getMaxThreads(ramNeededForHack)
+    const ramMaxThreads = await getMaxThreads(ns, ramNeededForHack)
     const maxThreads = Math.min(scriptThreads, ramMaxThreads)
     const max = ns.getServerMaxMoney(target)
     const portionToHack = (max / 5) * 4

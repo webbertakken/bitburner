@@ -1,4 +1,5 @@
-import { createApp } from './app'
+import { createApp } from '/core/app'
+import { getNodeInfo } from '/core/getNodeInfo'
 
 /** @param {NS} ns */
 export async function main(ns) {
@@ -7,7 +8,7 @@ export async function main(ns) {
   const f = app.formatters
 
   const [target] = ns.args
-  const node = app.getNodeInfo(target)
+  const node = getNodeInfo(ns, target)
 
   while (true) {
     ns.clearLog()

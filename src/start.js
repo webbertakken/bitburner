@@ -1,4 +1,5 @@
-import { createApp } from './app'
+import { createApp } from '/core/app'
+import { runLocal } from '/core/runLocal'
 
 /** @param {NS} ns */
 export async function main(ns) {
@@ -51,15 +52,15 @@ export async function main(ns) {
     ns.print(`🏃 Running scripts...`)
 
     // Kill everything
-    app.run('kill.js')
+    runLocal(ns, 'kill.js')
     await ns.sleep(2000)
 
     // Run home scripts.
-    app.run('monitor.js', 1, target)
-    app.run('farmer.js', 1)
-    app.run('controller.js', 1, maxSpendingMode)
-    app.run('spawner-local.js', 1, target, savingMode)
-    app.run('worm.js', 1, target)
+    runLocal(ns, 'monitor.js', 1, target)
+    runLocal(ns, 'farmer.js', 1)
+    runLocal(ns, 'controller.js', 1, maxSpendingMode)
+    runLocal(ns, 'spawner-local.js', 1, target, savingMode)
+    runLocal(ns, 'worm.js', 1, target)
 
     // Wait for milestone to be achieved
     while (!(await tryNotifyAchieved(milestone))) {

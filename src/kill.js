@@ -1,4 +1,4 @@
-import { createApp } from './app'
+import { createApp } from '/core/app'
 
 /** @param {NS} ns */
 export async function main(ns) {

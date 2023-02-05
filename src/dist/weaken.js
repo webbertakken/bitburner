@@ -1,5 +1,5 @@
 /** @param {NS} ns */
 export async function main(ns) {
-  const target = ns.args[0]
+  const [target] = ns.args
   while (true) await ns.weaken(target)
 }
