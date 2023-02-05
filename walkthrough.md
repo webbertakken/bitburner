@@ -7,7 +7,9 @@ A quick walkthrough of manual steps that need to be repeated every time you inst
 ```bash
 alias a=analyze
 alias sa=scan-analyze
-alias nslookup=run tools/nslookup.js
+alias lookup="run tools/lookup.js"
+alias scan-all="run tools/scan.js"
+alias quests="run tools/quests.js"
 ```
 
 ## Unlocks
@@ -39,10 +41,9 @@ backdoor
 | Sector-12   | Sector-12 | Yes (1m, BruteSSH.exe)       |    ✅     |
 | Aevum       | Aevum     | DeepscanV1.exe, AutoLink.exe |    ✅     |
 | Tian Di Hui | Ishima    | Remove non-focus penalty     |    ✅     |
-| Chongqing   | Chongqing |                              |    ❌     |
-| Ishima      | Ishima    |                              |    ❌     |
-| New Tokyo   | New Tokyo |                              |    ❌     |
-| Volhaven    | Volhaven  |                              |    ❌     |
+| Chongqing   | Chongqing |                              |    ✅     |
+| New Tokyo   | New Tokyo |                              |    ✅     |
+| Volhaven    | Volhaven  |                              |    ✅     |
 
 ### Progress based
 
