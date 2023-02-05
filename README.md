@@ -23,6 +23,8 @@ Install dependencies
 yarn
 ```
 
+Copy the values from `bitburner-theme.json` (custom dracula based hacker theme) into the game's theme editor.
+
 ## Usage
 
 1. Run the server `yarn dev`
