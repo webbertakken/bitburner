@@ -43,9 +43,6 @@ export const getFormatters = (ns) => ({})
 export const createApp = async (ns) => {
   await configure(ns)
 
-  // update globals
-  //if (console.log !== ns.print) console.log = ns.print
-
   return {
     formatters: {
       money: (amount) => `${ns.nFormat(amount, '$0.00a')}`.toUpperCase(),
@@ -134,11 +131,10 @@ export const createApp = async (ns) => {
       ns.closeTail()
 
       // Open new window
-      const { pid } = ns.getRunningScript() || { pid: 0 }
-      ns.tail(pid)
+      ns.tail()
       await ns.sleep(1) // Need to wait for window to actually spawn
-      ns.moveTail(2190 - col * (width + spacer), 10 + row * (height + spacer), pid)
-      ns.resizeTail(width, rowSpan * height + (rowSpan - 1) * spacer, pid)
+      ns.moveTail(2190 - col * (width + spacer), 10 + row * (height + spacer))
+      ns.resizeTail(width, rowSpan * height + (rowSpan - 1) * spacer)
     },
 
     fillAllocation: async (script, utilisation = 1) => {
