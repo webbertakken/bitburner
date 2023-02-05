@@ -13,7 +13,7 @@ export const fillAllocation = async (ns, script, utilisation = 1) => {
   const freeRam = maxRam - usedRam - leaveFree
   const scriptCost = ns.getScriptRam(scriptName)
   const poolSize = Math.max(50, maxRam / 18)
-  const threads = Math.floor(freeRam / scriptCost) * utilisation
+  const threads = Math.floor((freeRam / scriptCost) * utilisation)
 
   // Spawn full pools of threads
   const numInstances = Math.floor(threads / poolSize)
