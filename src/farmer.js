@@ -40,7 +40,7 @@ const hacknet = async (app, ns) => {
   // Upgrade level
   const cheapestLevelUpgradeNode = nodes.sort((a, b) => a.levelUpgradeCost - b.levelUpgradeCost)[0]
   if (cheapestLevelUpgradeNode.levelUpgradeCost < maxSpendingPerItem) {
-    ns.print(`⬆️ Upgrading 🎚️x10 for ${f.money(cheapestLevelUpgradeNode.levelUpgradeCost)}...`)
+    ns.print(`⬆️ Upgrading 🎚️ for ${f.money(cheapestLevelUpgradeNode.levelUpgradeCost)}...`)
     h.upgradeLevel(cheapestLevelUpgradeNode.id, 10)
     return
   }
