@@ -37,7 +37,7 @@ backdoor
 | Faction     | Continent | Offers unlocks?              | Completed |
 | :---------- | :-------- | ---------------------------- | :-------: |
 | Sector-12   | Sector-12 | Yes (1m, BruteSSH.exe)       |    ✅     |
-| Aevum       | Aevum     | DeepscanV1.exe, AutoLink.exe |    ❌     |
+| Aevum       | Aevum     | DeepscanV1.exe, AutoLink.exe |    ✅     |
 | Tian Di Hui | Ishima    | Remove non-focus penalty     |    ✅     |
 | Chongqing   | Chongqing |                              |    ❌     |
 | Ishima      | Ishima    |                              |    ❌     |
@@ -46,9 +46,10 @@ backdoor
 
 ### Progress based
 
-| Faction        | Host        | Unlocks      | Offers unlocks? | Completed |
-| :------------- | :---------- | ------------ | --------------- | :-------: |
-| Netburners     |             |              | Essential       |    ✅     |
-| CyberSec       | CSEC        |              | No              |    ✅     |
-| NiteSec        | avmnite-02h |              | Essential       |    ❌     |
-| The Black Hand | I.I.I.I     | 500 hacking? | Milestones only |    ❌     |
+| Faction        | Host         | Unlocks      | Offers unlocks?         | Completed |
+| :------------- | :----------- | ------------ | ----------------------- | :-------: |
+| Netburners     |              |              | Essential               |    ✅     |
+| CyberSec       | CSEC         |              | No                      |    ✅     |
+| NiteSec        | avmnite-02h  |              | Essential               |    ✅     |
+| The Black Hand | I.I.I.I      | 500 hacking? | Milestones only         |    ✅     |
+| BitRunners     | run4theh111z | 529 hacking  | FTPCrack.exe, relaySMTP |    ❌     |

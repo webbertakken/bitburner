@@ -11,22 +11,19 @@ const spawnCollector = async (ns, ...args) => {
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const [target, savingMode] = ns.args
+  const [target, type] = ns.args
 
   const app = await createApp(ns)
   await app.window(5)
 
   // Note: never utilise 100% because it causes trouble when reloading a script that became bigger.
-  if (!savingMode) {
+  if (type === 'weaken') {
+    await spawnCollector(ns, target)
+    await fillAllocation(ns, ['/dist/weaken.js', target], 1)
+  } else {
     await spawnCollector(ns, target)
     await fillAllocation(ns, ['/dist/grow.js', target], 0.45) // leave a lot of space for weaken on home
-    await fillAllocation(ns, ['/dist/weaken.js', target], 0.9)
-  } else {
-    await spawnCollector(ns, target, 1)
-    await spawnCollector(ns, target, 2)
-    await spawnCollector(ns, target, 3)
-    await spawnCollector(ns, target, 4)
-    await spawnCollector(ns, target, 5)
+    await fillAllocation(ns, ['/dist/weaken.js', target])
   }
 
   while (true) {

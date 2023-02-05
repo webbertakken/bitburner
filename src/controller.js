@@ -17,12 +17,9 @@ const hardware = async (app, ns, maxSpendingMode) => {
 
   // Calculate spending
   const myMoney = ns.getPlayer().money
-
-  // Keep 300M for purchases
-  if (maxSpendingMode && myMoney <= 500e6) return
-
   const spendingMultiplier = maxSpendingMode ? 0.95 : 0.01
-  const maxSpendingPerItem = myMoney * spendingMultiplier
+  const minimumToKeep = maxSpendingMode ? 300e6 : 0
+  const maxSpendingPerItem = (myMoney - minimumToKeep) * spendingMultiplier
   const maxServers = ns.getPurchasedServerLimit()
   const numPurchasedServers = ns.getPurchasedServers().length
 

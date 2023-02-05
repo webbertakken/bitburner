@@ -62,7 +62,7 @@ const createWorm = (app, ns) => {
     }
 
     ns.nuke(node.id)
-    ns.print(`✅ ${node.id} - Successfully cracked.`)
+    ns.print(`✅ ${node.id} (${node.securityLevel}) - Successfully cracked.`)
     registry.hasNewNodes = true
     registry.exploited.push(node.id)
     return true
@@ -73,8 +73,19 @@ const createWorm = (app, ns) => {
 
     const self = ns.getHostname()
 
+    // Skip low memory
+    if (ns.getServerMaxRam(host) < 8) return
+
     // Skip problematic hosts
-    const exclusions = ['home', 'CSEC', 'the-hub', 'zb-institute', 'solaris', 'univ-energy']
+    const exclusions = [
+      'home',
+      'CSEC',
+      'the-hub',
+      'zb-institute',
+      'solaris',
+      'univ-energy',
+      'global-pharm',
+    ]
     if (exclusions.includes(host)) return
 
     // Copy scripts
@@ -83,6 +94,7 @@ const createWorm = (app, ns) => {
       { script: '/core/fillAllocation.js', remoteScript: '/core/fillAllocation.js' },
       { script: '/core/getMaxThreads.js', remoteScript: '/core/getMaxThreads.js' },
       { script: '/core/runLocal.js', remoteScript: '/core/runLocal.js' },
+      { script: '/core/getFormatters.js', remoteScript: '/core/getFormatters.js' },
       { script: '/dist/weaken.js', remoteScript: 'weaken.js' },
       { script: '/dist/grow.js', remoteScript: 'grow.js' },
       { script: '/dist/spawner.js', remoteScript: 'spawner.js', init: true },
@@ -99,7 +111,7 @@ const createWorm = (app, ns) => {
     ns.killall(host)
     await ns.sleep(1000)
     const { remoteScript } = scripts.find(({ init }) => init)
-    runRemote(ns, remoteScript, host, 1, registry.target)
+    runRemote(ns, remoteScript, host, 1, registry.target, registry.type || '')
     ns.print(`📦 Deployed payload to ${host}`)
   }
 
@@ -112,7 +124,7 @@ const createWorm = (app, ns) => {
       if (await tryGetAccess(node)) {
         registry.exploited.push(node.id)
 
-        if (node.needsPayloadUpdate) {
+        if (node.needsPayloadUpdate || registry.isInitialRun) {
           await deliverPayload(node)
         }
       }
@@ -126,8 +138,9 @@ const createWorm = (app, ns) => {
   }
 
   return {
-    run: async (target) => {
+    run: async (target, type) => {
       registry.target = target
+      registry.type = type
       registry.self = await scanSelf()
       registry.discovered = []
       registry.exploited = []
@@ -160,13 +173,13 @@ export async function main(ns) {
   const app = await createApp(ns)
   await app.window(3, 0, 2)
 
-  const target = ns.args[0]
+  const [target, type] = ns.args
   const worm = createWorm(app, ns)
 
   ns.print(`🏃 Running...`)
 
   while (true) {
-    await worm.run(target)
+    await worm.run(target, type)
     await ns.sleep(1000)
   }
 }

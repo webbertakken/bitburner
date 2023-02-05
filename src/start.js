@@ -27,14 +27,28 @@ export async function main(ns) {
       maxSpendingMode: true,
     },
     {
-      goal: 'farm billions, get hacking level 500',
+      goal: 'farm billions, get hacking level',
       target: 'harakiri-sushi',
-      achieved: () => ns.getHackingLevel() >= 900,
+      achieved: () => ns.getHackingLevel() >= 400,
+      maxSpendingMode: true,
+    },
+    {
+      goal: 'farm many billions, get hacking level',
+      target: 'max-hardware',
+      achieved: () => ns.getHackingLevel() >= 950,
+      maxSpendingMode: true,
+    },
+    {
+      goal: 'prepare to farm',
+      type: 'weaken',
+      target: 'zeus-med',
+      achieved: () =>
+        ns.getServerSecurityLevel('zeus-med') === ns.getServerMinSecurityLevel('zeus-med'),
       maxSpendingMode: true,
     },
     {
       goal: 'spend everything on augments',
-      target: 'harakiri-sushi',
+      target: 'zeus-med',
       achieved: () => false,
       maxSpendingMode: false,
       savingMode: true,
@@ -43,7 +57,7 @@ export async function main(ns) {
 
   // Run milestones
   for (const milestone of milestones) {
-    const { goal, target, maxSpendingMode = false, savingMode = false } = milestone
+    const { goal, target, type = 'none', maxSpendingMode = false, savingMode = false } = milestone
     ns.print(`🚀 Running milestone: ${goal}`)
     ns.print(`🖥️ Target: ${target}`)
 
@@ -59,8 +73,8 @@ export async function main(ns) {
     runLocal(ns, 'monitor.js', 1, target)
     runLocal(ns, 'farmer.js', 1)
     runLocal(ns, 'controller.js', 1, maxSpendingMode)
-    runLocal(ns, 'spawner-local.js', 1, target, savingMode)
-    runLocal(ns, 'worm.js', 1, target)
+    runLocal(ns, 'spawner-local.js', 1, target, type)
+    runLocal(ns, 'worm.js', 1, target, type)
 
     // Wait for milestone to be achieved
     while (!(await tryNotifyAchieved(milestone))) {

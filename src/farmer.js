@@ -32,7 +32,7 @@ const hacknet = async (app, ns) => {
   // Upgrade ram
   const cheapestRamUpgradeNode = nodes.sort((a, b) => a.ramUpgradeCost - b.ramUpgradeCost)[0]
   if (cheapestRamUpgradeNode.ramUpgradeCost < maxSpendingPerItem) {
-    ns.print(`⬆️🐏 Upgrading ram for ${f.money(cheapestRamUpgradeNode.ramUpgradeCost)}...`)
+    ns.print(`⬆️ Upgrading 🐏 for ${f.money(cheapestRamUpgradeNode.ramUpgradeCost)}...`)
     h.upgradeRam(cheapestRamUpgradeNode.id, 1)
     return
   }
@@ -40,9 +40,7 @@ const hacknet = async (app, ns) => {
   // Upgrade level
   const cheapestLevelUpgradeNode = nodes.sort((a, b) => a.levelUpgradeCost - b.levelUpgradeCost)[0]
   if (cheapestLevelUpgradeNode.levelUpgradeCost < maxSpendingPerItem) {
-    ns.print(
-      `⬆️🎚️ Upgrading 10 levels for ${f.money(cheapestLevelUpgradeNode.levelUpgradeCost)}...`,
-    )
+    ns.print(`⬆️ Upgrading 🎚️x10 for ${f.money(cheapestLevelUpgradeNode.levelUpgradeCost)}...`)
     h.upgradeLevel(cheapestLevelUpgradeNode.id, 10)
     return
   }
@@ -50,7 +48,7 @@ const hacknet = async (app, ns) => {
   // Upgrade core
   const cheapestCoreUpgradeNode = nodes.sort((a, b) => a.coreUpgradeCost - b.coreUpgradeCost)[0]
   if (cheapestCoreUpgradeNode.coreUpgradeCost < maxSpendingPerItem) {
-    ns.print(`⬆️🧠 Upgrading core for ${f.money(cheapestCoreUpgradeNode.coreUpgradeCost)}...`)
+    ns.print(`⬆️ Upgrading 🧠 for ${f.money(cheapestCoreUpgradeNode.coreUpgradeCost)}...`)
     h.upgradeCore(cheapestCoreUpgradeNode.id, 1)
     return
   }
