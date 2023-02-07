@@ -12,8 +12,10 @@ export async function main(ns) {
 
   if (ns.getServerMaxRam(self) > 500) {
     ns.run('collector.js', 200, target)
+  } else {
+    await fillAllocation(ns, ['collector.js', target], 0.3)
   }
 
-  await fillAllocation(ns, ['grow.js', target], 0.7)
+  await fillAllocation(ns, ['grow.js', target], 0.55)
   await fillAllocation(ns, ['weaken.js', target])
 }

@@ -3,7 +3,7 @@ import { createApp } from '/core/app'
 /** @param {NS} ns */
 export async function main(ns) {
   const app = await createApp(ns)
-  await app.window(1)
+  await app.openWindow(1)
   ns.clearLog()
 
   // Close all windows
@@ -13,7 +13,7 @@ export async function main(ns) {
     .filter((x) => x.pid !== thisPid && x.filename !== 'start.js')
     .map((x) => x.pid)
 
-  ns.print(`😵 Killing ${pids.length} processes...`)
+  app.log(`😵 Killing ${pids.length} processes...`)
 
   for (const pid of pids) {
     ns.closeTail(pid)

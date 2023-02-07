@@ -4,7 +4,7 @@ import { getNodeInfo } from '/core/getNodeInfo'
 /** @param {NS} ns */
 export async function main(ns) {
   const app = await createApp(ns)
-  await app.window(1)
+  await app.openWindow(1)
   const f = app.formatters
 
   const [target] = ns.args
@@ -14,7 +14,7 @@ export async function main(ns) {
     ns.clearLog()
 
     // Apps
-    ns.print(
+    app.log(
       `🖥️ Apps available:
       ${ns.fileExists('BruteSSH.exe') ? '✅' : '❌'} ssh ` +
         `${ns.fileExists('FTPCrack.exe') ? '✅' : '❌'} ftp ` +
@@ -30,7 +30,7 @@ export async function main(ns) {
     const targetSecurity = f.number(ns.getServerSecurityLevel(node.id))
     const targetMinSecurity = f.number(ns.getServerMinSecurityLevel(node.id))
     const targetHackTime = f.time(ns.getHackTime(node.id))
-    ns.print(
+    app.log(
       `🎯 Current target: ${node.id}
       moneys ${targetMoney}/${targetMaxMoney}
       security: ${targetSecurity}/${targetMinSecurity}

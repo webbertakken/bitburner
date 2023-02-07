@@ -12,7 +12,11 @@ export const main = async (ns) => {
     commands.push(`${connect} backdoor ;`)
   }
 
-  ns.tprint(`🧑🏻‍💻 Commands:
+  ns.tprint(`
+📦 Prerequisites:
+    Tor Router
+🧑🏻‍💻 Commands:
+    connect darkweb ; buy -l ; buy FTPCrack.exe ; buy relaySMTP.exe ; buy HTTPWorm.exe ; buy SQLInject.exe ; buy DeepscanV1.exe ; buy DeepscanV2.exe ; buy ServerProfiler.exe ; buy AutoLink.exe ; buy Formulas.exe ; home ;
     ${commands.join('\n    ')}
   `)
 }

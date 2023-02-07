@@ -9,8 +9,9 @@ export async function main(ns) {
   const f = app.formatters
 
   const target = ns.args[0]
+  const self = ns.getHostname()
 
-  if (ns.getHostname() === 'home') await app.window(6)
+  if (self === 'home') await app.openWindow(6)
 
   while (true) {
     const { threads: scriptThreads } = ns.getRunningScript()
@@ -21,7 +22,7 @@ export async function main(ns) {
     const trigger = max / 10
 
     ns.clearLog()
-    ns.print(`⏳ Waiting for server to have the portion to hack available...`)
+    app.log(`⏳ Waiting for server to have the portion to hack available...`)
 
     let current = ns.getServerMoneyAvailable(target)
     if (current >= portionToHack) {
@@ -33,10 +34,11 @@ export async function main(ns) {
 
       // Not enough threads available
       if (threads > maxThreads) {
-        ns.print(`⚠️ Not enough threads (need: ${threads} / max: ${maxThreads}).`)
+        app.log(`⚠️ ${self} Not enough threads (need: ${threads} / max: ${maxThreads}).`)
         threads = maxThreads
       }
 
+      let notifiedWaiting = false
       while (true) {
         ns.clearLog()
 
@@ -46,8 +48,9 @@ export async function main(ns) {
           let result = 0
           while (result === 0) result = await ns.hack(target, { threads })
           await ns.sleep(1500)
-        } else {
-          ns.print(
+        } else if (!notifiedWaiting) {
+          notifiedWaiting = true
+          app.log(
             `⏳ Waiting for money to reach ${f.money(trigger)}. Current: ${f.money(
               current,
             )}/${f.money(max)}`,

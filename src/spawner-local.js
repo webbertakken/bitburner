@@ -2,28 +2,41 @@ import { createApp } from '/core/app'
 import { runLocal } from '/core/runLocal'
 import { fillAllocation } from '/core/fillAllocation'
 
-const threadsToHack = 200
-
 /** @param {NS} ns */
-const spawnCollector = async (ns, ...args) => {
-  runLocal(ns, '/dist/collector.js', threadsToHack, ...args)
+const spawnCollector = async (app, ns, target, reserve = 0) => {
+  const host = ns.getHostname()
+  const cost = ns.getScriptRam('/dist/collector.js')
+  const maxReserve = Math.max(0, reserve - ns.getScriptRam('spawner-local.js'))
+
+  const max = ns.getServerMaxRam(host)
+  const used = ns.getServerUsedRam(host)
+  const free = Math.max(0, max - used - maxReserve)
+
+  const maxThreads = Math.max(200, max / cost)
+  const threads = Math.min(Math.floor(free / cost), maxThreads)
+
+  runLocal(ns, '/dist/collector.js', threads, target)
+  await ns.sleep(1)
 }
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const [target, type] = ns.args
+  const [target, type, reserve] = ns.args
 
   const app = await createApp(ns)
-  await app.window(5)
+  await app.openWindow(5)
+
+  // Wait for essential processes to have spawned
+  await ns.sleep(10)
 
   // Note: never utilise 100% because it causes trouble when reloading a script that became bigger.
   if (type === 'weaken') {
-    await spawnCollector(ns, target)
-    await fillAllocation(ns, ['/dist/weaken.js', target], 1)
+    await spawnCollector(app, ns, target, reserve)
+    await fillAllocation(ns, ['/dist/weaken.js', target], 1, reserve)
   } else {
-    await spawnCollector(ns, target)
-    await fillAllocation(ns, ['/dist/grow.js', target], 0.45) // leave a lot of space for weaken on home
-    await fillAllocation(ns, ['/dist/weaken.js', target])
+    await spawnCollector(app, ns, target, reserve)
+    await fillAllocation(ns, ['/dist/grow.js', target], 0.45, reserve) // leave a lot of space for weaken on home
+    await fillAllocation(ns, ['/dist/weaken.js', target], 1, reserve)
   }
 
   while (true) {

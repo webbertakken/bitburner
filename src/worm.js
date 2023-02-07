@@ -20,12 +20,12 @@ const createWorm = (app, ns) => {
 
   const tryGetAccess = async (node) => {
     if (node.hasRootAccess) {
-      // ns.print(`✅ ${node.id} - (${node.maxRam}GB)`)
+      // app.log(`✅ ${node.id} - (${node.maxRam}GB)`)
       return true
     }
 
     if (node.reqHackingLevel > registry.self.hackingLevel) {
-      // ns.print(`❌ ${node.id} - (req hacking level: ${node.reqHackingLevel}).`)
+      // app.log(`❌ ${node.id} - (req hacking level: ${node.reqHackingLevel}).`)
       return false
     }
 
@@ -57,12 +57,12 @@ const createWorm = (app, ns) => {
     }
 
     if (portsLeft >= 1) {
-      // ns.print(`❌ ${node.id} - ${portsLeft} ports left.`)
+      // app.log(`❌ ${node.id} - ${portsLeft} ports left.`)
       return false
     }
 
     ns.nuke(node.id)
-    ns.print(`✅ ${node.id} (${node.securityLevel}) - Successfully cracked.`)
+    app.log(`✅ ${node.id} (${node.securityLevel}) - Successfully cracked.`)
     registry.hasNewNodes = true
     registry.exploited.push(node.id)
     return true
@@ -112,7 +112,7 @@ const createWorm = (app, ns) => {
     await ns.sleep(1000)
     const { remoteScript } = scripts.find(({ init }) => init)
     runRemote(ns, remoteScript, host, 1, registry.target, registry.type || '')
-    ns.print(`📦 Deployed payload to ${host}`)
+    app.log(`📦 Deployed payload to ${host}`)
   }
 
   const exploitNetwork = async (nodeId = registry.self.id) => {
@@ -149,9 +149,9 @@ const createWorm = (app, ns) => {
       // Get access to target first
       while (!(await tryGetAccess(getNodeInfo(ns, registry.target)))) {
         ns.clearLog()
-        ns.print(`🏃 Running...`)
-        ns.print(`⚠️ Unable to attain access to ${registry.target}...`)
-        ns.print(`   No payloads will be deployed. Retrying every second...`)
+        app.log(`🏃 Running...`)
+        app.log(`⚠️ Unable to attain access to ${registry.target}...`)
+        app.log(`   No payloads will be deployed. Retrying every second...`)
         await ns.sleep(1000)
       }
 
@@ -159,7 +159,7 @@ const createWorm = (app, ns) => {
       await exploitNetwork()
 
       if (registry.hasNewNodes) {
-        ns.print(`🎯 Exploited ${registry.exploited.length}/${registry.discovered.length} nodes.`)
+        app.log(`🎯 Exploited ${registry.exploited.length}/${registry.discovered.length} nodes.`)
       }
 
       registry.isInitialRun = false
@@ -171,12 +171,12 @@ const createWorm = (app, ns) => {
 /** @param {NS} ns */
 export async function main(ns) {
   const app = await createApp(ns)
-  await app.window(3, 0, 2)
+  await app.openWindow(3, 0, 2)
 
   const [target, type] = ns.args
   const worm = createWorm(app, ns)
 
-  ns.print(`🏃 Running...`)
+  app.log(`🏃 Running...`)
 
   while (true) {
     await worm.run(target, type)
