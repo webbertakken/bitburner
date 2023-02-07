@@ -2,6 +2,13 @@ import { createApp } from '/core/app'
 
 const unlocks = async (app, ns) => {
   const f = app.formatters
+  const { maxSpendingMode } = app.getSettings()
+  const plugins = app.getPlugins()
+
+  // Todo - Check whether 'home' machine can be upgraded.
+  // Todo - Buy tor router
+
+  // Todo - Buy software
 
   const myMoney = ns.getPlayer().money
 
@@ -12,8 +19,9 @@ const unlocks = async (app, ns) => {
   }
 }
 
-const hardware = async (app, ns, maxSpendingMode) => {
+const hardware = async (app, ns) => {
   const f = app.formatters
+  const { maxSpendingMode } = app.getSettings()
 
   // Calculate spending
   const myMoney = ns.getPlayer().money
@@ -62,6 +70,7 @@ const hardware = async (app, ns, maxSpendingMode) => {
 const hacknet = async (app, ns) => {
   const f = app.formatters
   const h = ns.hacknet
+  const { maxSpendingMode } = app.getSettings()
 
   const myMoney = ns.getPlayer().money
   const maxSpendingPerItem = Math.min(myMoney, Math.max(106_000, myMoney * 0.001))
@@ -117,7 +126,7 @@ const hacknet = async (app, ns) => {
 /** @param {NS} ns */
 export async function main(ns) {
   const app = await createApp(ns)
-  await app.openWindow(1, 1)
+  await app.openWindow(0, 1)
   const f = app.formatters
 
   // Show all prices once
@@ -132,11 +141,11 @@ export async function main(ns) {
   app.log('🏃 Running...')
 
   while (true) {
-    const { buyHardware, buyHacknetNodes, maxSpendingMode } = app.getSettings()
+    const { buyHardware, buyHacknetNodes } = app.getSettings()
 
-    await unlocks(app, ns, maxSpendingMode)
-    if (buyHardware) await hardware(app, ns, maxSpendingMode)
-    if (buyHacknetNodes) await hacknet(app, ns, maxSpendingMode)
+    await unlocks(app, ns)
+    if (buyHardware) await hardware(app, ns)
+    if (buyHacknetNodes) await hacknet(app, ns)
 
     await ns.sleep(1000)
   }

@@ -6,27 +6,26 @@ const SETTINGS_FILE = 'runtime.txt'
 /**
  * Everything in this method is free.
  *
+ * It is important to keep the cost of app at zero, so that even the smallest scripts can keep using it.
+ * That way we keep a consistent API for all scripts while not suffering ram deprivation in early game.
+ *
  * @param {NS} ns
+ * @param {Object} initialSettings - Settings to use before reading from disk
  */
-export const createApp = async (ns) => {
-  await configure(ns)
-
+export const createApp = async (ns, initialSettings = null) => {
   // Cache settings
-  let settings = null
-  const getSettings = () => settings || JSON.parse(ns.read(SETTINGS_FILE) || {})
+  const getSettings = () => JSON.parse(ns.read(SETTINGS_FILE) || {})
   const getSetting = (option) => getSettings()[option]
+  const initSettings = (settings) => ns.write(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'w')
   const updateSetting = (option, value) => {
-    settings = { ...getSettings(), [option]: value }
-    ns.write(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'w')
+    ns.write(SETTINGS_FILE, JSON.stringify({ ...getSettings(), [option]: value }, null, 2), 'w')
   }
 
   // Cache plugins
-  let plugins = null
-  const getPlugins = () => plugins || JSON.parse(ns.read(PLUGINS_FILE) || '{}')
+  const getPlugins = () => JSON.parse(ns.read(PLUGINS_FILE) || '{}')
   const getPlugin = (plugin) => getPlugins()[plugin]
   const registerPlugin = (plugin, options) => {
-    plugins = { ...getPlugins(), [plugin]: options }
-    ns.write(PLUGINS_FILE, JSON.stringify(plugins, null, 2), 'w')
+    ns.write(PLUGINS_FILE, JSON.stringify({ ...getPlugins(), [plugin]: options }, null, 2), 'w')
   }
 
   // Window
@@ -48,6 +47,13 @@ export const createApp = async (ns) => {
     ns.resizeTail(width, rowSpan * height + (rowSpan - 1) * spacer)
   }
 
+  // Initialise
+  await configure(ns)
+
+  // Only needs to be performed in the bootstrapping script, getSettings reads from disk after that.
+  if (initialSettings) initSettings(initialSettings)
+
+  // Public API
   return {
     hasWindow,
     log: (...args) => (hasWindow() ? ns.print(...args) : ns.tprint(...args)),

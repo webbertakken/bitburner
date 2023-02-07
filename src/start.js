@@ -1,17 +1,14 @@
 import { createApp } from '/core/app'
 import { runLocal } from '/core/runLocal'
 import { getMilestones } from './strategy.js'
+import { settings } from './settings.js'
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const app = await createApp(ns)
+  const app = await createApp(ns, settings)
   await app.openWindow(0)
   const self = 'home'
   ns.clearLog()
-
-  app.updateSetting('maxSpendingMode', true)
-  app.updateSetting('buyHardware', true)
-  app.updateSetting('buyHacknetNodes', false)
 
   // Notify
   const tryNotifyAchieved = async (milestone) => {
@@ -33,7 +30,7 @@ export async function main(ns) {
     app.log(`🏃 Running scripts...`)
 
     // Kill everything
-    runLocal(ns, 'kill.js')
+    runLocal(ns, 'tools/kill.js')
     await ns.sleep(1000)
     // runLocal(ns, 'tools/getBitNodeMultipliers.js', 1) // Source-File 5
     await ns.sleep(1000)
@@ -42,7 +39,7 @@ export async function main(ns) {
     let reserve = 0
     if (ns.getServerMaxRam(self) >= 128) {
       reserve = 32
-      runLocal(ns, 'scheduler.js', 1)
+      // runLocal(ns, 'scheduler.js', 1)
     }
 
     // Run home scripts.
