@@ -1,7 +1,7 @@
 import { getFormatters } from '/core/getFormatters'
 
-const PLUGINS_FILE = 'plugins/registered.json'
-const SETTINGS_FILE = 'runtime.json'
+const PLUGINS_FILE = 'plugins/registered.txt'
+const SETTINGS_FILE = 'runtime.txt'
 
 /**
  * Everything in this method is free.
@@ -11,22 +11,28 @@ const SETTINGS_FILE = 'runtime.json'
 export const createApp = async (ns) => {
   await configure(ns)
 
+  // Cache settings
+  let settings = null
+  const getSettings = () => settings || JSON.parse(ns.read(SETTINGS_FILE) || {})
+  const getSetting = (option) => getSettings()[option]
+  const updateSetting = (option, value) => {
+    settings = { ...getSettings(), [option]: value }
+    ns.write(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'w')
+  }
+
+  // Cache plugins
+  let plugins = null
+  const getPlugins = () => plugins || JSON.parse(ns.read(PLUGINS_FILE) || '{}')
+  const getPlugin = (plugin) => getPlugins()[plugin]
+  const registerPlugin = (plugin, options) => {
+    plugins = { ...getPlugins(), [plugin]: options }
+    ns.write(PLUGINS_FILE, JSON.stringify(plugins, null, 2), 'w')
+  }
+
+  // Window
   let windowSpawned = false
   const hasWindow = () => windowSpawned
-
-  const getOptions = () => JSON.parse(ns.read(SETTINGS_FILE))
-  const getOption = (option) => getOptions()[option]
-  const updateOption = (option, value) =>
-    ns.write(SETTINGS_FILE, JSON.stringify({ ...getOptions(), [option]: value }))
-
-  const getPlugins = () => JSON.parse(ns.read(PLUGINS_FILE))
-  const getPlugin = (plugin) => getPlugins()[plugin]
-  const registerPlugin = (plugin, options) =>
-    ns.write(PLUGINS_FILE, JSON.stringify({ ...getPlugins(), [plugin]: options }))
-
   const openWindow = async (row = 0, col = 0, rowSpan = 1) => {
-    windowSpawned = true
-
     const width = 670
     const height = 220
     const spacer = 10
@@ -36,7 +42,8 @@ export const createApp = async (ns) => {
 
     // Open new window
     ns.tail()
-    await ns.sleep(1) // Need to wait for window to actually spawn
+    windowSpawned = true
+    await ns.sleep(1) // Need to wait a frame window to actually spawn
     ns.moveTail(2190 - col * (width + spacer), 10 + row * (height + spacer))
     ns.resizeTail(width, rowSpan * height + (rowSpan - 1) * spacer)
   }
@@ -50,9 +57,9 @@ export const createApp = async (ns) => {
     getPlugins,
     getPlugin,
     registerPlugin,
-    getOptions,
-    getOption,
-    updateOption,
+    getSettings,
+    getSetting,
+    updateSetting,
   }
 }
 

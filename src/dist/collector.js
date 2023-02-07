@@ -22,7 +22,7 @@ export async function main(ns) {
     const trigger = max / 10
 
     ns.clearLog()
-    app.log(`⏳ Waiting for server to have the portion to hack available...`)
+    app.log(`⏳ Waiting for server to have ${f.money(portionToHack)} to hack available...`)
 
     let current = ns.getServerMoneyAvailable(target)
     if (current >= portionToHack) {

@@ -11,7 +11,7 @@ export async function main(ns) {
   const f = app.formatters
 
   while (true) {
-    const options = app.getOptions()
+    const options = app.getSettings()
     const plugins = app.getPlugins()
 
     // Todo - Check whether 'home' machine can be upgraded.
