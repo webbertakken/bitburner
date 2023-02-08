@@ -19,11 +19,17 @@ const objectives = async (app: App, ns: NS) => {
     if (app.getFact(factName) === true) continue
     if (ns.getHackingLevel() < requiredLevel || !ns.hasRootAccess(host)) continue
 
-    const pid = ns.run(`plugins/singularity/backdoor.js`, 1, path)
-    if (pid > 0) {
+    const pid1 = ns.run(`plugins/singularity/connect.js`, 1, path)
+    if (pid1 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
+
+    const pid2 = ns.run(`plugins/singularity/backdoor.js`)
+    if (pid2 > 0) {
+      while (ns.isRunning(pid2)) await ns.sleep(1)
       app.updateFact(factName, true)
-      while (ns.isRunning(pid)) await ns.sleep(1)
     }
+
+    const pid3 = ns.run(`plugins/singularity/connect.js`)
+    if (pid3 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
   }
 }
 
@@ -239,6 +245,7 @@ export async function main(ns: NS) {
   while (true) {
     const { buyHardware, buyHacknetNodes } = app.getSettings()
 
+    await objectives(app, ns)
     await unlocks(app, ns)
     if (buyHardware) await hardware(app, ns)
     if (buyHacknetNodes) await hacknet(app, ns)

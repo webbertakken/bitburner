@@ -8,6 +8,7 @@ export async function main(ns: NS) {
       alias restart="kill true ; run start.js true" ;
       alias reset="kill true ; start" ;
       alias configure="run tools/configure.js" ;
+      alias fact="run tools/fact.js" ;
       alias aliases="run tools/aliases.js" ;
   `)
 }
