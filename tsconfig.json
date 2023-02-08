@@ -19,7 +19,5 @@
       "@ns": ["./NetscriptDefinitions.d.ts"]
     }
   },
-  "include": ["src/**/*.ts", "NetscriptDefinitions.d.ts",
-    "vite.config.ts"
-  ]
+  "include": ["src/**/*.ts", "NetScriptDefinitions.d.ts", "vite.config.ts"]
 }
