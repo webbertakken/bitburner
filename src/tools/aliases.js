@@ -1,8 +1,8 @@
-import { createApp } from '/core/app'
+import { createApp } from '../core/app';
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const app = await createApp(ns)
+  const app = await createApp(ns);
 
   ns.tprint(`
     🪒 Aliases:
@@ -12,5 +12,5 @@ export async function main(ns) {
       alias reset="kill true ; start" ;
       alias configure="run tools/configure.js" ;
       alias aliases="run tools/aliases.js" ;
-  `)
+  `);
 }

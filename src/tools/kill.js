@@ -1,34 +1,34 @@
-import { createApp } from '/core/app'
+import { createApp } from '../core/app';
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const [killStart] = ns.args
+  const [killStart] = ns.args;
 
-  const app = await createApp(ns)
-  await app.openWindow(1)
-  ns.clearLog()
+  const app = await createApp(ns);
+  await app.openWindow(1);
+  ns.clearLog();
 
   // Close all windows
-  const { pid: thisPid } = ns.getRunningScript()
+  const { pid: thisPid } = ns.getRunningScript();
   const pids = ns
     .ps()
     .filter((x) => x.pid !== thisPid && (killStart || x.filename !== 'start.js'))
-    .map((x) => x.pid)
+    .map((x) => x.pid);
 
-  app.log(`😵 Killing ${pids.length} processes...`)
+  app.log(`😵 Killing ${pids.length} processes...`);
 
   for (const pid of pids) {
-    ns.closeTail(pid)
+    ns.closeTail(pid);
   }
-  await ns.sleep(1000)
+  await ns.sleep(1000);
 
   // Kill all
   for (const pid of pids) {
-    ns.kill(pid)
+    ns.kill(pid);
   }
-  await ns.sleep(1000)
+  await ns.sleep(1000);
 
   // Close
-  await ns.sleep(2000)
-  ns.closeTail(thisPid)
+  await ns.sleep(2000);
+  ns.closeTail(thisPid);
 }

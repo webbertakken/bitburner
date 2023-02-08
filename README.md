@@ -8,7 +8,7 @@ Inside the game you `run start.js`, which will bootstrap all logic.
 
 It will open terminals for:
 
-- The bootstrapper (start.js)
+- The bootstrapper (start.ts)
 - Monitor (monitor.js) - this will indicate what's going on in the game.
 - Worm (worm.js) - auto discovers nodes on the internet and will attempt to add them to your botnet.
 - Spawner (spawner-local.js) - will fully utilise any resources on the home machine.
