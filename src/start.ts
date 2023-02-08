@@ -1,7 +1,7 @@
-import { createApp } from './core/app';
-import { runLocal } from './core/runLocal';
-import { getMilestones } from './strategy.js';
-import { settings } from './settings.js';
+import { createApp } from '@/core/app.ts';
+import { runLocal } from '@/core/runLocal.ts';
+import { getMilestones } from '@/strategy.ts';
+import { settings } from '@/settings.ts';
 import { NS } from '@ns';
 
 export async function main(ns: NS) {

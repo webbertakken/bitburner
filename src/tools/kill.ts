@@ -1,7 +1,7 @@
-import { createApp } from '../core/app';
+import { createApp } from '@/core/app.ts';
+import { NS } from '@ns';
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   const [killStart] = ns.args;
 
   const app = await createApp(ns);

@@ -1,5 +1,6 @@
-/** @param {NS} ns */
-export async function main(ns) {
-  const [target] = ns.args
-  while (true) await ns.weaken(target)
+import { NS } from '@ns';
+
+export async function main(ns: NS) {
+  const [target] = ns.args;
+  while (true) await ns.weaken(target);
 }

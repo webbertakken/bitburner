@@ -1,10 +1,10 @@
-import { createApp } from '../core/app';
-import { getMaxThreads } from '../core/getMaxThreads';
+import { createApp } from '@/core/app.ts';
+import { getMaxThreads } from '@/core/getMaxThreads.ts';
+import { NS } from '@ns';
 
 const ramNeededForHack = 0.1;
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   const app = await createApp(ns);
   const f = app.formatters;
 

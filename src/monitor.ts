@@ -1,8 +1,8 @@
-import { createApp } from './core/app';
-import { getNodeInfo } from './core/getNodeInfo';
+import { getNodeInfo } from '@/core/getNodeInfo.ts';
+import { createApp } from '@/core/app.ts';
+import { NS } from '@ns';
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   const app = await createApp(ns);
   await app.openWindow(1, 0, 2);
   const f = app.formatters;

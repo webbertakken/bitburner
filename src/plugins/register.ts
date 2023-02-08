@@ -1,13 +1,13 @@
-import { createApp } from '../core/app.js';
-import { runLocal } from '../core/runLocal.js';
+import { createApp } from '@/core/app.js';
+import { runLocal } from '@/core/runLocal.js';
+import { NS } from '@ns';
 
 /**
  * Reset the plugin registry, then let each plugin register itself.
  *
  * Plugins must provide a settings object or false when disabled.
- *
- * @param {NS} ns */
-export async function main(ns) {
+ */
+export async function main(ns: NS) {
   const app = await createApp(ns);
 
   // Plugins

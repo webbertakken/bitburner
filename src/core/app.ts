@@ -1,4 +1,5 @@
-import { getFormatters } from './getFormatters';
+import { getFormatters } from '@/core/getFormatters';
+import { NS } from '@ns';
 
 const PLUGINS_FILE = '/plugins/registered.txt';
 const SETTINGS_FILE = 'runtime.txt';
@@ -9,11 +10,8 @@ const FACTS_FILE = 'facts.txt';
  *
  * It is important to keep the cost of app at zero, so that even the smallest scripts can keep using it.
  * That way we keep a consistent API for all scripts while not suffering ram deprivation in early game.
- *
- * @param {NS} ns
- * @param {Object} initialSettings - Settings to use before reading from disk
  */
-export const createApp = async (ns, initialSettings = null) => {
+export const createApp = async (ns: NS, initialSettings = null) => {
   // Settings
   const getSettings = () => JSON.parse(ns.read(SETTINGS_FILE) || {});
   const getSetting = (option) => getSettings()[option];
@@ -80,8 +78,7 @@ export const createApp = async (ns, initialSettings = null) => {
   };
 };
 
-/** @param {NS} ns */
-export const configure = async (ns) => {
+export const configure = async (ns: NS) => {
   ns.disableLog('disableLog');
   ns.disableLog('enableLog');
   ns.disableLog('sleep');

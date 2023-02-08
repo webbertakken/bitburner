@@ -1,6 +1,7 @@
-import { createApp } from './core/app.js';
+import { NS } from '@ns';
+import { createApp } from '@/core/app.ts';
 
-const objectives = async (app, ns) => {
+const objectives = async (app, ns: NS) => {
   if (ns.hackingLevel >= 57 && ns.hasRootAccess('CSEC')) {
   }
 };
@@ -195,8 +196,7 @@ const hacknet = async (app, ns) => {
   }
 };
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   const app = await createApp(ns);
   await app.openWindow(0, 1);
   const f = app.formatters;

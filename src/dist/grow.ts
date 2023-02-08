@@ -1,5 +1,6 @@
-/** @param {NS} ns */
-export async function main(ns) {
-  const [target] = ns.args
-  while (true) await ns.grow(target)
+import { NS } from '@ns';
+
+export async function main(ns: NS) {
+  const [target] = ns.args;
+  while (true) await ns.grow(target);
 }

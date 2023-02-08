@@ -1,11 +1,11 @@
-import { createApp } from './core/app';
-import { getNodeInfo } from './core/getNodeInfo';
-import { runRemote } from './core/runRemote';
+import { createApp } from '@/core/app.ts';
+import { getNodeInfo } from '@/core/getNodeInfo.ts';
+import { runRemote } from '@/core/runRemote.ts';
+import { NS } from '@ns';
 
 const SECONDS = 1000;
 
-/** @param {NS} ns */
-const createWorm = (app, ns) => {
+const createWorm = (app, ns: NS) => {
   const registry = { isInitialRun: true };
 
   const scanSelf = async () => ({ hackingLevel: ns.getHackingLevel(), id: ns.getHostname() });
@@ -160,8 +160,7 @@ const createWorm = (app, ns) => {
   };
 };
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   const app = await createApp(ns);
   await app.openWindow(3, 0, 2);
 

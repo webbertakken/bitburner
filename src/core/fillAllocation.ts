@@ -1,4 +1,4 @@
-import { runLocal } from './runLocal';
+import { runLocal } from '@/core/runLocal.ts';
 
 export const fillAllocation = async (ns, script, utilisation = 1, reserve = 0) => {
   const [scriptName, ...args] = script;

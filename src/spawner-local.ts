@@ -1,9 +1,9 @@
-import { createApp } from './core/app';
-import { runLocal } from './core/runLocal';
-import { fillAllocation } from './core/fillAllocation';
+import { createApp } from '@/core/app.ts';
+import { runLocal } from '@/core/runLocal.ts';
+import { fillAllocation } from '@/core/fillAllocation.ts';
+import { NS } from '@ns';
 
-/** @param {NS} ns */
-const spawnCollector = async (app, ns, target, reserve = 0) => {
+const spawnCollector = async (app: NS, ns, target, reserve = 0) => {
   const host = ns.getHostname();
   const cost = ns.getScriptRam('/dist/collector.js');
   const maxReserve = Math.max(0, reserve - ns.getScriptRam('spawner-local.js'));
@@ -19,8 +19,7 @@ const spawnCollector = async (app, ns, target, reserve = 0) => {
   await ns.sleep(1);
 };
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   const [target, type, reserve] = ns.args;
 
   const app = await createApp(ns);

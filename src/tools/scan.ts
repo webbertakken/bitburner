@@ -1,5 +1,5 @@
-import { getNodeInfo } from '../core/getNodeInfo';
-import { getFormatters } from '../core/getFormatters';
+import { getNodeInfo } from '@/core/getNodeInfo.ts';
+import { getFormatters } from '@/core/getFormatters.ts';
 
 export const createScanner = (ns) => {
   const whitelist = ['weaken.js', 'grow.js', 'spawner.js', 'collector.js'];

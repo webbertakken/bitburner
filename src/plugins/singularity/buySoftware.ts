@@ -1,7 +1,8 @@
-/** @param {NS} ns */
-export async function main(ns) {
-  const [software] = ns.args
+import { NS } from '@ns';
+
+export async function main(ns: NS) {
+  const [software] = ns.args;
   if (ns.singularity.purchaseProgram(software)) {
-    ns.tprint(`✔️ ${software} purchased.`)
+    ns.tprint(`✔️ ${software} purchased.`);
   }
 }

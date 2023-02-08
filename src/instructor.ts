@@ -1,4 +1,4 @@
-import { createApp } from './core/app';
+import { createApp } from '@/core/app.ts';
 
 /**
  * Singularity based methods

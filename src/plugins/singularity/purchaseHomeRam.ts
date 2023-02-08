@@ -1,7 +1,7 @@
-import { createApp } from '../../core/app.js';
+import { createApp } from '@/core/app.ts';
+import { NS } from '@ns';
 
-/** @param {NS} ns */
-export async function main(ns) {
+export async function main(ns: NS) {
   const app = await createApp(ns);
   const t = app.formatters;
   if (ns.singularity.upgradeHomeRam()) {
