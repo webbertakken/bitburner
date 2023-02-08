@@ -1,6 +1,6 @@
 import { getFormatters } from '/core/getFormatters'
 
-const PLUGINS_FILE = 'plugins/registered.txt'
+const PLUGINS_FILE = '/plugins/registered.txt'
 const SETTINGS_FILE = 'runtime.txt'
 
 /**

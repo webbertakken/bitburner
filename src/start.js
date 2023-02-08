@@ -33,8 +33,6 @@ export async function main(ns) {
     // Kill everything
     runLocal(ns, 'tools/kill.js')
     await ns.sleep(1000)
-    // runLocal(ns, 'tools/getBitNodeMultipliers.js', 1) // Source-File 5
-    await ns.sleep(1000)
 
     // Reserve RAM so that the scheduler can run scripts.
     let reserve = 0
@@ -43,6 +41,7 @@ export async function main(ns) {
     }
 
     // Run home scripts.
+    runLocal(ns, 'plugins/register.js')
     runLocal(ns, 'monitor.js', 1, target)
     runLocal(ns, 'controller.js', 1)
     runLocal(ns, 'spawner-local.js', 1, target, type, reserve)

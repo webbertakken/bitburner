@@ -5,13 +5,13 @@ const unlocks = async (app, ns) => {
   const { maxSpendingMode } = app.getSettings()
   const plugins = app.getPlugins()
 
+  if (!plugins.singularity) return
+
   // Todo - Check whether 'home' machine can be upgraded.
   // Todo - Buy tor router
-
   // Todo - Buy software
 
   const myMoney = ns.getPlayer().money
-
   if (myMoney >= 200_000) {
     // Requires This singularity function requires Source-File 4 to run. A power up you obtain later in the game.
     // ns.hasTorRouter() || app.log(`Buying Tor Router for ${f.money(200_000)}...`)

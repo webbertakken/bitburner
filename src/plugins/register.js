@@ -1,5 +1,5 @@
 import { createApp } from '/core/app.js'
-import { runLocal } from '../core/runLocal.js'
+import { runLocal } from '/core/runLocal.js'
 
 /**
  * Reset the plugin registry, then let each plugin register itself.
@@ -12,7 +12,8 @@ export async function main(ns) {
 
   // Plugins
   const plugins = [
-    { name: 'base', defaultSettings: {} },
+    { name: 'base', defaultSettings: false },
+    { name: 'hacknet', defaultSettings: false },
     { name: 'singularity', defaultSettings: false },
   ]
 
