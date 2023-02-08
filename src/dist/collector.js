@@ -13,6 +13,7 @@ export async function main(ns) {
 
   if (self === 'home') await app.openWindow(6)
 
+  let notifiedServerWait = false
   while (true) {
     const { threads: scriptThreads } = ns.getRunningScript()
     const ramMaxThreads = await getMaxThreads(ns, ramNeededForHack)
@@ -21,8 +22,10 @@ export async function main(ns) {
     const portionToHack = (max / 5) * 4
     const trigger = max / 10
 
-    ns.clearLog()
-    app.log(`⏳ Waiting for server to have ${f.money(portionToHack)} to hack available...`)
+    if (!notifiedServerWait) {
+      ns.print(`⏳ Waiting for server to have ${f.money(portionToHack)} to hack available...`)
+      notifiedServerWait = true
+    }
 
     let current = ns.getServerMoneyAvailable(target)
     if (current >= portionToHack) {
@@ -50,10 +53,9 @@ export async function main(ns) {
           await ns.sleep(1500)
         } else if (!notifiedWaiting) {
           notifiedWaiting = true
-          app.log(
-            `⏳ Waiting for money to reach ${f.money(trigger)}. Current: ${f.money(
-              current,
-            )}/${f.money(max)}`,
+          ns.print(
+            `⏳ Waiting for money to reach ${f.money(trigger)}.` +
+              ` Current: ${f.money(current)}/${f.money(max)}`,
           )
         }
 

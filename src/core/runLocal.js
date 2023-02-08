@@ -4,7 +4,7 @@ export const runLocal = (ns, script, threads, ...args) => {
 
   if (pid === 0) {
     ns.tprint(`❌: ${script} failed to run. Most likely out of RAM.`)
-    ns.exit()
+    // ns.exit()
   }
 
   return pid

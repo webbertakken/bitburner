@@ -2,7 +2,10 @@ export const getMilestones = (ns) => [
   {
     goal: 'get hacking level 150',
     target: 'n00dles',
-    achieved: () => ns.hasRootAccess('foodnstuff'),
+    achieved: () =>
+      ns.getHackingLevel() >= 100 &&
+      ns.hasRootAccess('foodnstuff') &&
+      ns.fileExists('BruteSSH.exe', 'home'),
   },
   {
     goal: 'weaken food n stuff',
@@ -25,12 +28,12 @@ export const getMilestones = (ns) => [
     achieved: () =>
       ns.getServerSecurityLevel('harakiri-sushi') ===
         ns.getServerMinSecurityLevel('harakiri-sushi') ||
-      (ns.getHackingLevel() >= 400 && ns.hasRootAccess('max-hardware')),
+      (ns.getHackingLevel() >= 600 && ns.hasRootAccess('max-hardware')),
   },
   {
     goal: 'farm billions, get hacking level',
     target: 'harakiri-sushi',
-    achieved: () => ns.getHackingLevel() >= 400 && ns.hasRootAccess('max-hardware'),
+    achieved: () => ns.getHackingLevel() >= 600 && ns.hasRootAccess('max-hardware'),
   },
   {
     goal: 'prepare to farm max-hardware',

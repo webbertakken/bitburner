@@ -3,7 +3,7 @@ import { runLocal } from '/core/runLocal'
 export const fillAllocation = async (ns, script, utilisation = 1, reserve = 0) => {
   const [scriptName, ...args] = script
 
-  ns.tprint(
+  ns.print(
     `⚒️ Spawning ${script} ${args.join(' ')} with ${Math.round(utilisation * 100)}% utilisation`,
   )
 
@@ -24,7 +24,7 @@ export const fillAllocation = async (ns, script, utilisation = 1, reserve = 0) =
 
   // Spawn remaining threads
   const instanceRest = threads % poolSize
-  if (instanceRest > 0) runLocal(ns, scriptName, instanceRest, ...[...args, numInstances + 1])
+  if (instanceRest > 0) runLocal(ns, scriptName, instanceRest, ...[...args, numInstances])
 
   await ns.sleep(2)
 }

@@ -2,6 +2,7 @@ import { getFormatters } from '/core/getFormatters'
 
 const PLUGINS_FILE = '/plugins/registered.txt'
 const SETTINGS_FILE = 'runtime.txt'
+const FACTS_FILE = 'facts.txt'
 
 /**
  * Everything in this method is free.
@@ -13,7 +14,7 @@ const SETTINGS_FILE = 'runtime.txt'
  * @param {Object} initialSettings - Settings to use before reading from disk
  */
 export const createApp = async (ns, initialSettings = null) => {
-  // Cache settings
+  // Settings
   const getSettings = () => JSON.parse(ns.read(SETTINGS_FILE) || {})
   const getSetting = (option) => getSettings()[option]
   const initSettings = (settings) => ns.write(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'w')
@@ -21,11 +22,18 @@ export const createApp = async (ns, initialSettings = null) => {
     ns.write(SETTINGS_FILE, JSON.stringify({ ...getSettings(), [option]: value }, null, 2), 'w')
   }
 
-  // Cache plugins
+  // Plugins
   const getPlugins = () => JSON.parse(ns.read(PLUGINS_FILE) || '{}')
   const getPlugin = (plugin) => getPlugins()[plugin]
   const registerPlugin = (plugin, options) => {
     ns.write(PLUGINS_FILE, JSON.stringify({ ...getPlugins(), [plugin]: options }, null, 2), 'w')
+  }
+
+  // Facts
+  const getFacts = () => JSON.parse(ns.read(FACTS_FILE) || {})
+  const getFact = (name) => getFacts()[name]
+  const updateFact = (name, value) => {
+    ns.write(FACTS_FILE, JSON.stringify({ ...getFacts(), [name]: value }, null, 2), 'w')
   }
 
   // Window
@@ -66,6 +74,9 @@ export const createApp = async (ns, initialSettings = null) => {
     getSettings,
     getSetting,
     updateSetting,
+    getFacts,
+    getFact,
+    updateFact,
   }
 }
 
@@ -106,4 +117,5 @@ export const configure = async (ns) => {
   ns.disableLog('nuke')
   ns.disableLog('killall')
   ns.disableLog('kill')
+  ns.disableLog('purchaseServer')
 }

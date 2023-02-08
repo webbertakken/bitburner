@@ -32,20 +32,23 @@ export async function main(ns) {
 
     // Kill everything
     runLocal(ns, 'tools/kill.js')
-    await ns.sleep(1000)
+    await ns.sleep(2000)
 
-    // Reserve RAM so that the scheduler can run scripts.
-    let reserve = 0
-    if (ns.getServerMaxRam(self) >= 128) {
-      reserve = 32
-    }
+    // Reserve RAM so that the controller can run scripts.
+    let reserve = 8
+    if (ns.getServerMaxRam(self) >= 128) reserve = 32
+    if (ns.getServerMaxRam(self) >= 256) reserve = 50
 
     // Run home scripts.
     runLocal(ns, 'plugins/register.js')
+    await ns.sleep(10)
     runLocal(ns, 'monitor.js', 1, target)
-    runLocal(ns, 'controller.js', 1)
-    runLocal(ns, 'spawner-local.js', 1, target, type, reserve)
+    await ns.sleep(10)
     runLocal(ns, 'worm.js', 1, target, type)
+    await ns.sleep(10)
+    runLocal(ns, 'controller.js', 1)
+    await ns.sleep(10)
+    runLocal(ns, 'spawner-local.js', 1, target, type, reserve)
 
     // Wait for milestone to be achieved
     while (!(await tryNotifyAchieved(milestone))) {
