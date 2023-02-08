@@ -1,6 +1,6 @@
-import { NS } from '@ns';
+import { NS } from '@ns'
 
 export async function main(ns: NS) {
-  const [target] = ns.args;
-  while (true) await ns.grow(target);
+  const [target] = ns.args as [string]
+  while (true) await ns.grow(target)
 }

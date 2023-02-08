@@ -1,13 +1,13 @@
-import { NS } from '@ns';
+import { NS, ScriptArg } from '@ns'
 
-export const runLocal = (ns: NS, script, threads, ...args) => {
-  ns.disableLog('run');
-  const pid = ns.run(script, threads, ...args);
+export const runLocal = (ns: NS, script: string, threads = 1, ...args: ScriptArg[]) => {
+  ns.disableLog('run')
+  const pid = ns.run(script, threads, ...args)
 
   if (pid === 0) {
-    ns.tprint(`❌: ${script} failed to run. Most likely out of RAM.`);
+    ns.tprint(`❌: ${script} failed to run. Most likely out of RAM.`)
     // ns.exit()
   }
 
-  return pid;
-};
+  return pid
+}

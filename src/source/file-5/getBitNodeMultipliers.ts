@@ -1,5 +1,5 @@
-import { NS } from '@ns';
+import { NS } from '@ns'
 
 export const main = async (ns: NS) => {
-  ns.tprint(ns.getBitNodeMultipliers());
-};
+  ns.tprint(ns.getBitNodeMultipliers())
+}

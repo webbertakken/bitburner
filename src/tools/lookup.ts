@@ -1,20 +1,25 @@
-import { createScanner } from './scan';
+import { createScanner } from './scan'
+import { NS } from '@ns'
 
-export const lookup = (ns, host) => {
-  return createScanner(ns)
+export const lookup = (ns: NS, host: string): NodeInfo => {
+  const possibleNode = createScanner(ns)
     .scanRecursively()
-    .find((node) => node.id === host);
-};
+    .find((node) => node.id === host)
 
-export const main = async (ns) => {
-  const [host] = ns.args;
+  if (!possibleNode) throw new Error(`❌ Could not find ${host}.`)
 
-  ns.tprint(`🔍 Looking up ${host}`);
-  const node = lookup(ns, host);
-  ns.tprint(JSON.stringify(node, null, 2));
+  return possibleNode
+}
 
-  const connect = `connect ` + node.path.split(' ').join('; connect ');
+export const main = async (ns: NS) => {
+  const [hostName] = ns.args as [string]
+
+  ns.tprint(`🔍 Looking up ${hostName}`)
+  const node = lookup(ns, hostName)
+  ns.tprint(JSON.stringify(node, null, 2))
+
+  const connect = `connect ` + node.path.split(' ').join('; connect ')
   ns.tprint(`🧑🏻‍💻 Commands:
     ${connect} ; ls ;
-  `);
-};
+  `)
+}

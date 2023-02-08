@@ -1,6 +1,13 @@
-import { NS } from '@ns';
+import { NS } from '@ns'
 
-export const getMilestones = (ns: NS) => [
+export type Milestone = {
+  goal: string
+  target: string
+  type?: 'weaken'
+  achieved: () => boolean
+}
+
+export const getMilestones = (ns: NS): Milestone[] => [
   {
     goal: 'get hacking level 150',
     target: 'n00dles',
@@ -71,4 +78,4 @@ export const getMilestones = (ns: NS) => [
     target: 'ecorp',
     achieved: () => false,
   },
-];
+]
