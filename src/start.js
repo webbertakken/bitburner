@@ -5,7 +5,8 @@ import { settings } from './settings.js'
 
 /** @param {NS} ns */
 export async function main(ns) {
-  const app = await createApp(ns, settings)
+  const [preserveSettings] = ns.args
+  const app = await createApp(ns, preserveSettings ? null : settings)
   await app.openWindow(0)
   const self = 'home'
   ns.clearLog()
@@ -39,7 +40,6 @@ export async function main(ns) {
     let reserve = 0
     if (ns.getServerMaxRam(self) >= 128) {
       reserve = 32
-      // runLocal(ns, 'scheduler.js', 1)
     }
 
     // Run home scripts.

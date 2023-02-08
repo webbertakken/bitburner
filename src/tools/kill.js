@@ -2,6 +2,8 @@ import { createApp } from '/core/app'
 
 /** @param {NS} ns */
 export async function main(ns) {
+  const [killStart] = ns.args
+
   const app = await createApp(ns)
   await app.openWindow(1)
   ns.clearLog()
@@ -10,7 +12,7 @@ export async function main(ns) {
   const { pid: thisPid } = ns.getRunningScript()
   const pids = ns
     .ps()
-    .filter((x) => x.pid !== thisPid && x.filename !== 'start.js')
+    .filter((x) => x.pid !== thisPid && (killStart || x.filename !== 'start.js'))
     .map((x) => x.pid)
 
   app.log(`😵 Killing ${pids.length} processes...`)
