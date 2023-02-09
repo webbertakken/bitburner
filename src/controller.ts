@@ -1,5 +1,30 @@
-import { NS } from '@ns'
+import { FactionWorkType, NS } from '@ns'
 import { createApp } from '@/core/app'
+
+const factions = async (app: App, ns: NS) => {
+  let factionInvitations = ['initial']
+  while (factionInvitations && factionInvitations.length >= 1) {
+    // Get faction invitations
+    const pid1 = ns.run(`plugins/singularity/getFactionInvitations.js`, 1)
+    if (pid1 <= 0) return
+    while (ns.isRunning(pid1)) await ns.sleep(1)
+    factionInvitations = (app.getFact('factionInvitations') as string[]) || []
+
+    // Join factions
+    if (factionInvitations.length >= 1) {
+      const pid2 = ns.run(`plugins/singularity/joinFaction.js`, 1, factionInvitations[0])
+      if (pid2 <= 0) return
+      while (ns.isRunning(pid2)) await ns.sleep(1)
+
+      // Work for faction
+      const pid3 = ns.run(`plugins/singularity/workForFaction.js`, 1, factionInvitations[0])
+      if (pid3 <= 0) return
+      while (ns.isRunning(pid3)) await ns.sleep(1)
+    }
+
+    await ns.sleep(10)
+  }
+}
 
 const objectives = async (app: App, ns: NS) => {
   const backdoors = [
@@ -12,6 +37,12 @@ const objectives = async (app: App, ns: NS) => {
       path: 'foodnstuff max-hardware phantasy johnson-ortho syscore lexo-corp galactic-cyber omnia icarus zb-def run4theh111z',
     },
   ]
+
+  // Reset objectives
+  // for (const { host } of backdoors) {
+  //   const factName = `backdoored ${host}`
+  //   if (app.getFact(factName) === true) app.updateFact(factName, false)
+  // }
 
   for (const { host, requiredLevel, path } of backdoors) {
     const factName = `backdoored ${host}`
@@ -242,9 +273,13 @@ export async function main(ns: NS) {
   app.log('\n')
   app.log('🏃 Running...')
 
+  let interval = -1
   while (true) {
+    interval++
+
     const { buyHardware, buyHacknetNodes } = app.getSettings()
 
+    if (interval % 10 === 0) await factions(app, ns)
     await objectives(app, ns)
     await unlocks(app, ns)
     if (buyHardware) await hardware(app, ns)

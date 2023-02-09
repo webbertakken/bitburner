@@ -7,7 +7,7 @@ type Option = ScriptArg
 type Options = { [key: string]: Option } | boolean
 type Plugins = { [key: string]: Options }
 
-type Fact = ScriptArg | null
+type Fact = ScriptArg | ScriptArg[] | null
 type Facts = { [key: string]: Fact }
 
 type Formatter = (key: number) => string
@@ -26,7 +26,7 @@ type App = {
   updateSetting: (option: string, value: Setting) => void
   getFacts: () => Facts
   getFact: (name: string) => Fact
-  updateFact: (name: string, value: ScriptArg) => void
+  updateFact: (name: string, value: ScriptArg | ScriptArg[], silent?: boolean) => void
 }
 
 type NodeInfo = {

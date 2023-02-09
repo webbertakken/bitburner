@@ -12,7 +12,7 @@ const spawnCollector = async (app: App, ns: NS, target: string, reserve = 0) => 
   const used = ns.getServerUsedRam(host)
   const free = Math.max(0, max - used - maxReserve)
 
-  const maxThreads = 200
+  const maxThreads = ns.getPlayer().money < 1e9 ? 200 : Number.POSITIVE_INFINITY
   const threads = Math.min(Math.floor(free / cost), maxThreads)
 
   runLocal(ns, '/dist/collector.js', threads, target)

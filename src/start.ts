@@ -37,7 +37,8 @@ export async function main(ns: NS) {
     // Reserve RAM so that the controller can run scripts.
     let reserve = 8
     if (ns.getServerMaxRam(self) >= 128) reserve = 32
-    if (ns.getServerMaxRam(self) >= 256) reserve = 50
+    if (ns.getServerMaxRam(self) >= 256) reserve = 64
+    if (ns.getServerMaxRam(self) >= 512) reserve = 128
 
     // Run home scripts.
     runLocal(ns, 'plugins/register.js')
