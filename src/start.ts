@@ -1,7 +1,7 @@
 import { createApp } from '@/core/app'
 import { runLocal } from '@/core/runLocal'
-import { getMilestones, Milestone } from '@/strategy'
-import { settings } from '@/settings'
+import { getMilestones, Milestone } from '@/config/strategy'
+import { settings } from '@/config/settings'
 import { NS } from '@ns'
 
 export async function main(ns: NS) {

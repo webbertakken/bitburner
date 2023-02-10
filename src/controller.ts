@@ -1,4 +1,4 @@
-import { FactionWorkType, NS } from '@ns'
+import { NS } from '@ns'
 import { createApp } from '@/core/app'
 
 const factions = async (app: App, ns: NS) => {
@@ -27,28 +27,23 @@ const factions = async (app: App, ns: NS) => {
 }
 
 const objectives = async (app: App, ns: NS) => {
-  const backdoors = [
-    { host: 'CSEC', requiredLevel: 57, path: 'harakiri-sushi CSEC' },
-    { host: 'avmnite-02h', requiredLevel: 220, path: 'harakiri-sushi nectar-net omega-net avmnite-02h' },
-    { host: 'I.I.I.I', requiredLevel: 353, path: 'foodnstuff max-hardware phantasy johnson-ortho I.I.I.I' },
-    {
-      host: 'run4theh111z',
-      requiredLevel: 507,
-      path: 'foodnstuff max-hardware phantasy johnson-ortho syscore lexo-corp galactic-cyber omnia icarus zb-def run4theh111z',
-    },
-  ]
+  const backdoors = ['CSEC', 'avmnite-02h', 'I.I.I.I', 'run4theh111z']
 
   // Reset objectives
-  // for (const { host } of backdoors) {
+  // for (const host of backdoors) {
   //   const factName = `backdoored ${host}`
   //   if (app.getFact(factName) === true) app.updateFact(factName, false)
   // }
 
-  for (const { host, requiredLevel, path } of backdoors) {
+  for (const host of backdoors) {
     const factName = `backdoored ${host}`
 
+    const node = app.getFact(host) as NodeInfo
+    if (!node) continue
+    const { reqHackingLevel, path } = node
+
     if (app.getFact(factName) === true) continue
-    if (ns.getHackingLevel() < requiredLevel || !ns.hasRootAccess(host)) continue
+    if (ns.getHackingLevel() < reqHackingLevel || !ns.hasRootAccess(host)) continue
 
     const pid1 = ns.run(`plugins/singularity/connect.js`, 1, path)
     if (pid1 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
@@ -276,6 +271,20 @@ export async function main(ns: NS) {
   let interval = -1
   while (true) {
     interval++
+
+    if (ns.getHackingLevel() >= 2500) {
+      app.updateSetting('maxSpendingMode', false)
+      app.updateSetting('buyHardware', false)
+      app.updateSetting('buyHacknetNodes', false)
+      app.updateSetting('upgradeHome', false)
+      // if (ns.getPlayer().money >= 100e9) {
+      //   const pid = ns.run(`plugins/singularity/getNumAugments.js`)
+      //   if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      //   if (app.getFact('numAugments') >= 30) {
+      //     // Invitation from Daedalus
+      //   }
+      // }
+    }
 
     const { buyHardware, buyHacknetNodes } = app.getSettings()
 

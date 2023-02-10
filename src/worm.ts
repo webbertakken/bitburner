@@ -2,6 +2,7 @@ import { createApp } from '@/core/app'
 import { getNodeInfo } from '@/core/getNodeInfo'
 import { runRemote } from '@/core/runRemote'
 import { NS } from '@ns'
+import { createScanner } from '@/core/scanner'
 
 const SECONDS = 1000
 
@@ -11,24 +12,15 @@ type Self = {
 }
 
 type Registry = {
-  discovered: string[]
   isInitialRun: boolean
   self: Self
   [key: string]: any
 }
 
 const createWorm = (app: App, ns: NS) => {
-  const registry: Registry = { discovered: [], isInitialRun: true, self: { id: '', hackingLevel: 0 } }
+  const registry: Registry = { isInitialRun: true, self: { id: '', hackingLevel: 0 } }
 
   const scanSelf = async (): Promise<Self> => ({ hackingLevel: ns.getHackingLevel(), id: ns.getHostname() })
-
-  const scanNetwork = async (host: string) => {
-    return ns
-      .scan(host)
-      .filter((nodeId) => !registry.discovered.includes(nodeId))
-      .map((nodeId) => getNodeInfo(ns, nodeId))
-      .sort((a, b) => a.securityLevel - b.securityLevel)
-  }
 
   const tryGetAccess = async (node: NodeInfo) => {
     if (node.hasRootAccess) {
@@ -112,32 +104,33 @@ const createWorm = (app: App, ns: NS) => {
     }
 
     // Run script
-    ns.killall(host)
-    await ns.sleep(1000)
     const { remoteScript } = scripts.find(({ init }) => init)!
     runRemote(ns, remoteScript, host, 1, registry.target, registry.type || '')
     app.log(`📦 Deployed payload to ${host}`)
   }
 
-  const exploitNetwork = async (nodeId = registry.self.id) => {
-    const network = await scanNetwork(nodeId)
-    // Deliver payloads
+  const exploitNetwork = async () => {
+    // Find all nodes
+    const network = createScanner(ns).scanRecursively()
+    registry.numDiscovered = network.length
+
+    // Stop processes
     for (const node of network) {
-      registry.discovered.push(node.id)
+      if (node.needsPayloadUpdate || registry.isInitialRun) {
+        ns.killall(node.id)
+      }
+    }
+    await ns.sleep(1000)
 
+    // Deliver new payloads
+    for (const node of network) {
       if (await tryGetAccess(node)) {
-        registry.exploited.push(node.id)
-
         if (node.needsPayloadUpdate || registry.isInitialRun) {
+          registry.exploited.push(node.id)
           await deliverPayload(node)
+          app.updateFact(node.id, node)
         }
       }
-      await ns.sleep(1)
-    }
-
-    // Recursive
-    for (const node of network) {
-      await exploitNetwork(node.id)
     }
   }
 
@@ -146,7 +139,6 @@ const createWorm = (app: App, ns: NS) => {
       registry.target = target
       registry.type = type
       registry.self = await scanSelf()
-      registry.discovered = []
       registry.exploited = []
       registry.hasNewNodes = registry.isInitialRun || false
 
@@ -163,7 +155,7 @@ const createWorm = (app: App, ns: NS) => {
       await exploitNetwork()
 
       if (registry.hasNewNodes) {
-        app.log(`🎯 Exploited ${registry.exploited.length}/${registry.discovered.length} nodes.`)
+        app.log(`🎯 Exploited ${registry.exploited.length}/${registry.numDiscovered} nodes.`)
       }
 
       registry.isInitialRun = false

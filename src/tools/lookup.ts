@@ -1,5 +1,5 @@
-import { createScanner } from './scan'
 import { NS } from '@ns'
+import { createScanner } from '@/core/scanner'
 
 export const lookup = (ns: NS, host: string): NodeInfo => {
   const possibleNode = createScanner(ns)
