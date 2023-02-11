@@ -1,5 +1,6 @@
 import { NS } from '@ns'
 import { createApp } from '@/core/app'
+import { DaedalusState, State } from '@/config/settings'
 
 const factions = async (app: App, ns: NS) => {
   let factionInvitations = ['initial']
@@ -155,44 +156,48 @@ const hardware = async (app: App, ns: NS) => {
   const f = app.formatters
   const { maxSpendingMode } = app.getSettings()
 
-  // Calculate spending
-  const myMoney = ns.getPlayer().money
+  while (true) {
+    // Calculate spending
+    const myMoney = ns.getPlayer().money
 
-  // Note: 0.5 is enough, because you're spending 25 times the maxSpendingPerItem to double capacity.
-  // For example, if your next upgrade would cost 1M, it would upgrade every time when you have 2M.
-  // In this example you need 26M total instead of 25.1M if you would use a multiplier of 0.99.
-  // This strategy allows buying other things of equal cost in between.
-  const spendingMultiplier = maxSpendingMode ? 0.5 : 0.01
-  const maxSpendingPerItem = myMoney * spendingMultiplier
+    // Note: 0.5 is enough, because you're spending 25 times the maxSpendingPerItem to double capacity.
+    // For example, if your next upgrade would cost 1M, it would upgrade every time when you have 2M.
+    // In this example you need 26M total instead of 25.1M if you would use a multiplier of 0.99.
+    // This strategy allows buying other things of equal cost in between.
+    const spendingMultiplier = maxSpendingMode ? 0.5 : 0.01
+    const maxSpendingPerItem = myMoney * spendingMultiplier
 
-  // First buy up to the maximum amount of servers
-  const maxServers = ns.getPurchasedServerLimit()
-  const numPurchasedServers = ns.getPurchasedServers().length
-  if (numPurchasedServers < maxServers) {
-    const scale = Math.pow(2, 4) // 16GB
-    const newServerCost = ns.getPurchasedServerCost(scale)
-    if (newServerCost < maxSpendingPerItem || (newServerCost <= 100e6 && myMoney >= 100e6)) {
-      const nextId = ns.getPurchasedServers().length % maxServers
-      const hostname = `webber${nextId}`
-      app.log(`🆕 Buying new server "${hostname}" for ${f.money(newServerCost)}...`)
-      ns.purchaseServer(hostname, scale)
+    // First buy up to the maximum amount of servers
+    const maxServers = ns.getPurchasedServerLimit()
+    const numPurchasedServers = ns.getPurchasedServers().length
+    if (numPurchasedServers < maxServers) {
+      const scale = Math.pow(2, 4) // 16GB
+      const newServerCost = ns.getPurchasedServerCost(scale)
+      if (newServerCost < maxSpendingPerItem || (newServerCost <= 100e6 && myMoney >= 100e6)) {
+        const nextId = ns.getPurchasedServers().length % maxServers
+        const hostname = `webber${nextId}`
+        app.log(`🆕 Buying new server "${hostname}" for ${f.money(newServerCost)}...`)
+        ns.purchaseServer(hostname, scale)
+      }
+
+      return
     }
 
-    return
-  }
-
-  // Then upgrade the servers when affordable
-  const servers = ns.getPurchasedServers().sort((a, b) => ns.getServerMaxRam(a) - ns.getServerMaxRam(b))
-  for (const hostname of servers) {
-    const ram = ns.getServerMaxRam(hostname)
-    const nextPower = Math.log2(ram) + 1
-    const nextRam = Math.pow(2, nextPower)
-    const nextCost = ns.getPurchasedServerUpgradeCost(hostname, nextRam)
-    if (nextCost <= maxSpendingPerItem) {
-      if (nextCost >= 1e9 && myMoney < 6e9 + nextCost) return // Keep at least 6B at some point
-      app.log(`⏩ Upgrading "${hostname}" to ${nextRam}GB for ${f.money(nextCost)}...`)
-      ns.upgradePurchasedServer(hostname, nextRam)
-      break
+    // Then upgrade the servers when affordable
+    const servers = ns.getPurchasedServers().sort((a, b) => ns.getServerMaxRam(a) - ns.getServerMaxRam(b))
+    for (const hostname of servers) {
+      const ram = ns.getServerMaxRam(hostname)
+      const nextPower = Math.log2(ram) + 1
+      const nextRam = Math.pow(2, nextPower)
+      const nextCost = ns.getPurchasedServerUpgradeCost(hostname, nextRam)
+      if (nextCost <= maxSpendingPerItem) {
+        if (nextCost >= 1e9 && myMoney < 6e9 + nextCost) return // Keep at least 6B at some point
+        app.log(`⏩ Upgrading "${hostname}" to ${nextRam}GB for ${f.money(nextCost)}...`)
+        ns.upgradePurchasedServer(hostname, nextRam)
+        break
+      } else {
+        return
+      }
     }
   }
 }
@@ -252,6 +257,78 @@ const hacknet = async (app: App, ns: NS) => {
   }
 }
 
+const augmentations = async (app: App, ns: NS) => {}
+
+const daedalus = async (app: App, ns: NS) => {
+  // Start going for Daedalus after 2500 hacking skill
+  let state = app.getSetting('state')
+  if (state !== State.Daedalus && ns.getHackingLevel() >= 2500) {
+    state = State.Daedalus
+    app.updateSetting('state', state)
+  }
+
+  if (state !== State.Daedalus) return
+
+  switch (app.getSetting('daedalusState')) {
+    case DaedalusState.None: {
+      if (ns.getPlayer().money < 10e9) {
+        app.updateSetting('maxSpendingMode', true)
+      } else {
+        app.updateSetting('maxSpendingMode', false)
+      }
+      app.updateSetting('buyHardware', true)
+      app.updateSetting('buyHacknetNodes', false)
+      app.updateSetting('upgradeHome', false)
+      app.updateSetting('daedalusState', DaedalusState.UnlockPrerequisites)
+      break
+    }
+    case DaedalusState.UnlockPrerequisites: {
+      if (ns.getHackingLevel() <= 2500) return
+      if (ns.getPlayer().money < 1e9) return
+      const pid = ns.run(`plugins/singularity/getNumAugmentations.js`)
+      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      if (Number(app.getFact('numInstalledAugmentations')) < 30) return
+      if (app.getFact('daedalusJoined') !== true) return
+      app.updateSetting('daedalusState', DaedalusState.BuyAugments)
+      break
+    }
+    case DaedalusState.BuyAugments: {
+      const workingFor = app.getFact('workingFor')
+      if (workingFor !== 'Daedalus') {
+        const pid = ns.run(`plugins/singularity/workForFaction.js`)
+        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        return
+      }
+
+      // Todo - doublecheck that favour was meant
+      const daedalusFavour = Number(app.getFact('daedalusFavour'))
+      const daedalusAugments = Number(app.getFact('daedalusAugments'))
+      if (daedalusFavour <= 10 && daedalusAugments <= 1) return
+
+      app.updateSetting('maxSpendingMode', true)
+      app.updateSetting('daedalusState', DaedalusState.BuyRedPill)
+      break
+    }
+    case DaedalusState.BuyRedPill: {
+      const workingFor = app.getFact('workingFor')
+      if (workingFor !== 'Daedalus') {
+        const pid = ns.run(`plugins/singularity/workForFaction.js`)
+        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        return
+      }
+
+      if (app.getFact('daedalusRedPill') !== true) return
+      app.updateSetting('daedalusState', DaedalusState.BoughtRedPill)
+      break
+    }
+    case DaedalusState.BoughtRedPill: {
+      // World daemon
+      ns.tprint('🖲️ Go for world daemon')
+      break
+    }
+  }
+}
+
 export async function main(ns: NS) {
   const app = await createApp(ns)
   await app.openWindow(0, 1)
@@ -272,22 +349,10 @@ export async function main(ns: NS) {
   while (true) {
     interval++
 
-    if (ns.getHackingLevel() >= 2500) {
-      app.updateSetting('maxSpendingMode', false)
-      app.updateSetting('buyHardware', false)
-      app.updateSetting('buyHacknetNodes', false)
-      app.updateSetting('upgradeHome', false)
-      // if (ns.getPlayer().money >= 100e9) {
-      //   const pid = ns.run(`plugins/singularity/getNumAugments.js`)
-      //   if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
-      //   if (app.getFact('numAugments') >= 30) {
-      //     // Invitation from Daedalus
-      //   }
-      // }
-    }
-
     const { buyHardware, buyHacknetNodes } = app.getSettings()
 
+    await daedalus(app, ns)
+    await augmentations(app, ns)
     if (interval % 10 === 0) await factions(app, ns)
     await objectives(app, ns)
     await unlocks(app, ns)

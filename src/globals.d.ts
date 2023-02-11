@@ -1,7 +1,14 @@
 type ScriptArg = string | number | boolean
 
+type State = 'idle' | 'daedalus'
+type DaedalusState = 'none' | 'unlockPrerequisites' | 'buyAugments' | 'buyRedPill' | 'boughtRedPill'
+
 type Setting = ScriptArg | null
-type Settings = { [key: string]: Setting }
+type Settings = {
+  state: State
+  daedalusState: DaedalusState
+  [key: string]: Setting
+}
 
 type Option = ScriptArg
 type Options = { [key: string]: Option } | boolean
