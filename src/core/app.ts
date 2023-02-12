@@ -30,7 +30,7 @@ export const createApp = async (ns: NS, initialSettings: Settings | null = null)
   // Facts
   const getFacts = (): Facts => JSON.parse(ns.read(FACTS_FILE) || '{}')
   const getFact = (name: string): Fact => getFacts()[name] || null
-  const updateFact = (name: string, value: ScriptArg | ScriptArg[], silent = false) => {
+  const updateFact = (name: string, value: Fact, silent = false) => {
     if (!silent) ns.tprint(`Updating fact ${name} to ${value}`)
     ns.write(FACTS_FILE, JSON.stringify({ ...getFacts(), [name]: value }, null, 2), 'w')
   }

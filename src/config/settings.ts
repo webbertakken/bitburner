@@ -1,14 +1,16 @@
 export enum State {
-  Idle = 'idle',
+  Init = 'init',
   Daedalus = 'daedalus',
 }
 
 export enum DaedalusState {
+  DisabledThisRun = 'disabledThisRun',
   None = 'none',
   UnlockPrerequisites = 'unlockPrerequisites',
-  BuyAugments = 'buyAugments',
+  UnlockDonations = 'unlockDonations',
   BuyRedPill = 'buyRedPill',
   BoughtRedPill = 'boughtRedPill',
+  InstalledRedPill = 'installedRedPill',
 }
 
 /**
@@ -17,8 +19,10 @@ export enum DaedalusState {
  * Overrides will be stored as json in runtime.txt
  */
 export const settings: Settings = {
-  // States
-  state: State.Idle,
+  // Global state
+  state: State.Init,
+
+  // Sub-states
   daedalusState: DaedalusState.None,
 
   // Helps progress as fast as possible, disable when you want to start saving

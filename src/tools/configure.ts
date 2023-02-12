@@ -17,6 +17,12 @@ export async function main(ns: NS) {
   const [setting, assignment] = (ns.args[0] as string).split('=')!
   let value: ScriptArg = [assignment, ...ns.args.slice(1)].join(' ')
 
+  // Remove value
+  if (value === '') {
+    app.updateSetting(setting, undefined!)
+    return ns.tprint(`\n🪒 Removed setting ⚙️ ${setting}`)
+  }
+
   // Type casting
   if (!isNaN(Number(value))) value = Number(value)
   if (['true', 'false'].includes(value as string)) value = value === 'true'
