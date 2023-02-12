@@ -204,15 +204,17 @@ export const main = async (ns: NS) => {
         }
       }
 
-      // Donate excess money
-      const donationAmount = 10e9
-      if (ns.getPlayer().money >= price + donationAmount) {
-        await runLocal(ns, `plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
+      // Donate excess money after hardware is maxed
+      if (!app.getSetting('buyHardware') || app.getFact('allServersMaxed')) {
+        const donationAmount = 10e9
+        if (ns.getPlayer().money >= price + donationAmount) {
+          await runLocal(ns, `plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
+        }
       }
 
       // Restart after buying 10 neuroflux governors
       const boughtAugmentations = (app.getFact('boughtAugmentations') as string[]) || []
-      if (boughtAugmentations.length >= 10) {
+      if (boughtAugmentations.length >= 10 && ns.getHackingLevel() <= 8700) {
         ns.tprint('🧬 Installing augmentations.')
         ns.tprint('♻️ Restarting instance.')
         app.updateSetting('needsReset', true)

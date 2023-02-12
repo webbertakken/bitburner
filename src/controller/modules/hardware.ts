@@ -46,19 +46,27 @@ export const main = async (ns: NS) => {
 
     // Then upgrade the servers when affordable
     const servers = ns.getPurchasedServers().sort((a, b) => ns.getServerMaxRam(a) - ns.getServerMaxRam(b))
+    let allServersMaxed = true
     for (const hostname of servers) {
       const ram = ns.getServerMaxRam(hostname)
       const nextPower = Math.log2(ram) + 1
       const nextRam = Math.pow(2, nextPower)
       const nextCost = ns.getPurchasedServerUpgradeCost(hostname, nextRam)
+      if (!Number.isNaN(nextCost)) allServersMaxed = false
       if (nextCost <= maxSpendingPerItem) {
         if (nextCost >= 1e9 && myMoney < 6e9 + nextCost) return // Keep at least 6B at some point
         app.log(`⏩ Upgrading "${hostname}" to ${nextRam}GB for ${f.money(nextCost)}...`)
         ns.upgradePurchasedServer(hostname, nextRam)
         break
-      } else {
-        return
       }
+      await ns.sleep(1)
     }
+
+    if (allServersMaxed) {
+      ns.tprint('All servers maxed')
+      app.updateFact('allServersMaxed', true)
+    }
+
+    return
   }
 }
