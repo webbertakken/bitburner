@@ -1,6 +1,7 @@
 export enum State {
   Init = 'init',
   Daedalus = 'daedalus',
+  WorldDaemon = 'worldDaemon',
 }
 
 export enum DaedalusState {
@@ -11,6 +12,7 @@ export enum DaedalusState {
   BuyRedPill = 'buyRedPill',
   BoughtRedPill = 'boughtRedPill',
   InstalledRedPill = 'installedRedPill',
+  Completed = 'completed',
 }
 
 /**

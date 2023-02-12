@@ -128,7 +128,7 @@ const createWorm = (app: App, ns: NS) => {
         if (node.needsPayloadUpdate || registry.isInitialRun) {
           registry.exploited.push(node.id)
           await deliverPayload(node)
-          app.updateFact(node.id, node)
+          app.updateFact(node.id, node, true)
         }
       }
     }

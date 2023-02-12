@@ -41,20 +41,18 @@ export async function main(ns: NS) {
         threads = maxThreads
       }
 
-      let notifiedWaiting = false
       while (true) {
         ns.clearLog()
-
         // Start the process of taking half when it's 10% full - anticipated to fill to 100% before the process completes.
         current = ns.getServerMoneyAvailable(target)
         if (current >= trigger) {
           let result = 0
           while (result === 0) result = await ns.hack(target, { threads })
           await ns.sleep(1500)
-        } else if (!notifiedWaiting) {
-          notifiedWaiting = true
+        } else {
           ns.print(
-            `⏳ Waiting for money to reach ${f.money(trigger)}.` + ` Current: ${f.money(current)}/${f.money(max)}`,
+            `⏳ Waiting for money on server to reach to reach ${f.money(trigger)}.` +
+              ` Current: ${f.money(current)}/${f.money(max)}.`,
           )
         }
 

@@ -10,25 +10,30 @@ export async function main(ns: NS) {
     const numInstalledAugmentations = installedAugmentations.length
     if (previousNumInstalled !== numInstalledAugmentations) {
       ns.tprint(`🧬 Installed ${numInstalledAugmentations} augmentations.`)
-      app.updateFact('installedAugmentations', installedAugmentations)
-      app.updateFact('numInstalledAugmentations', numInstalledAugmentations)
+      app.updateFact('installedAugmentations', installedAugmentations, true)
+      app.updateFact('numInstalledAugmentations', numInstalledAugmentations, true)
     }
 
     // All bought (installed + bought)
     const previousAllBoughtAugmentations = (app.getFact('allBoughtAugmentations') as string[]) || []
     const allBoughtAugmentations = ns.singularity.getOwnedAugmentations(true)
     if (previousAllBoughtAugmentations.length !== allBoughtAugmentations.length) {
-      app.updateFact('allBoughtAugmentations', allBoughtAugmentations)
-      app.updateFact('numAllBoughtAugmentations', allBoughtAugmentations.length)
+      app.updateFact('allBoughtAugmentations', allBoughtAugmentations, true)
+      app.updateFact('numAllBoughtAugmentations', allBoughtAugmentations.length, true)
     }
 
     // Bought this round
-    const boughtAugmentations = allBoughtAugmentations.filter((a) => !installedAugmentations.includes(a))
+    let fluxes = 0
+    const boughtAugmentations = allBoughtAugmentations.filter((a) => {
+      // Filter out 1 the NeuroFlux Governor from installedAugmentations itself.
+      if (a === 'NeuroFlux Governor') fluxes += 1
+      return !installedAugmentations.includes(a) || (a === 'NeuroFlux Governor' && fluxes !== 2)
+    })
     const previousNumBought = Number(app.getFact('numBoughtAugmentations'))
     const numBoughtAugmentations = boughtAugmentations.length
     if (previousNumBought !== numBoughtAugmentations) {
-      app.updateFact('boughtAugmentations', boughtAugmentations)
-      app.updateFact('numBoughtAugmentations', numBoughtAugmentations)
+      app.updateFact('boughtAugmentations', boughtAugmentations, true)
+      app.updateFact('numBoughtAugmentations', numBoughtAugmentations, true)
       ns.tprint(`🧬 Bought ${numBoughtAugmentations} augmentations so far (not counting NeuroFlux Governor).`)
     }
   } catch (error: any) {

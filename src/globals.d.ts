@@ -1,6 +1,6 @@
 type ScriptArg = string | number | boolean
 
-type State = 'init' | 'daedalus'
+type State = 'init' | 'daedalus' | 'worldDaemon'
 type DaedalusState =
   | 'none'
   | 'disabledThisRun'
@@ -9,6 +9,7 @@ type DaedalusState =
   | 'buyRedPill'
   | 'boughtRedPill'
   | 'installedRedPill'
+  | 'completed'
 
 type Setting = ScriptArg | null
 type Settings = {

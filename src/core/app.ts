@@ -11,7 +11,7 @@ const FACTS_FILE = 'facts.txt'
  * It is important to keep the cost of app at zero, so that even the smallest scripts can keep using it.
  * That way we keep a consistent API for all scripts while not suffering ram deprivation in early game.
  */
-export const createApp = async (ns: NS, initialSettings: Settings | null = null): Promise<App> => {
+export const createApp = async (ns: NS, settings: Settings | null = null): Promise<App> => {
   // Settings
   const getSettings = (): Settings => JSON.parse(ns.read(SETTINGS_FILE) || '{}')
   const getSetting = (option: string): Setting => getSettings()[option]
@@ -35,6 +35,14 @@ export const createApp = async (ns: NS, initialSettings: Settings | null = null)
     ns.write(FACTS_FILE, JSON.stringify({ ...getFacts(), [name]: value }, null, 2), 'w')
   }
 
+  // Reset
+  const reset = () => {
+    if (!settings) throw new Error('Cannot reset without default settings')
+    ns.write(SETTINGS_FILE, JSON.stringify({ ...settings, needsReset: false }), 'w')
+    ns.write(PLUGINS_FILE, JSON.stringify({}), 'w')
+    ns.write(FACTS_FILE, JSON.stringify({}), 'w')
+  }
+
   // Window
   let windowSpawned = false
   const hasWindow = () => windowSpawned
@@ -56,9 +64,10 @@ export const createApp = async (ns: NS, initialSettings: Settings | null = null)
 
   // Initialise
   await configure(ns)
-
-  // Only needs to be performed in the bootstrapping script, getSettings reads from disk after that.
-  if (initialSettings) initSettings(initialSettings)
+  if (getSetting('needsReset') === true && settings !== null) {
+    ns.tprint('resetting plugins, settings and facts.')
+    reset()
+  }
 
   // Public API
   return {

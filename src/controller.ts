@@ -258,7 +258,41 @@ const hacknet = async (app: App, ns: NS) => {
   }
 }
 
-const augmentations = async (app: App, ns: NS) => {}
+const augmentations = async (app: App, ns: NS) => {
+  // Todo - Chongqing
+  //  - Neuregen Gene Modification (40% hack xp)
+  //  - Neuralstimulator (12% hack xp) ----
+  //  - DataJack (25% hack power)
+  // Todo - Sector-12
+  //  - Neuralstimulator (12% hack xp) ----
+  //  - CashRoot Starter Kit (1M + BruteSSH.exe)
+}
+
+const worldDaemon = async (app: App, ns: NS) => {
+  const state = app.getSetting('state')
+  if (state !== State.WorldDaemon || ns.getHackingLevel() < 9000) return
+
+  // World daemon
+  ns.tprint('🖲️ Go for world daemon')
+
+  // Connect
+  const { path } = app.getFact('The-Cave') as NodeInfo
+  const worldDaemonPath = `${path} w0r1d_d43m0n`
+  const pid1 = ns.run(`plugins/singularity/connect.js`, 1, worldDaemonPath)
+  if (pid1 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
+
+  // Nuke
+  ns.brutessh('w0r1d_d43m0n')
+  ns.relaysmtp('w0r1d_d43m0n')
+  ns.ftpcrack('w0r1d_d43m0n')
+  ns.httpworm('w0r1d_d43m0n')
+  ns.sqlinject('w0r1d_d43m0n')
+  ns.nuke('w0r1d_d43m0n')
+
+  // Backdoor
+  const pid2 = ns.run(`plugins/singularity/backdoor.js`)
+  if (pid2 > 0) while (ns.isRunning(pid2)) await ns.sleep(1)
+}
 
 const daedalus = async (app: App, ns: NS) => {
   // Start going for Daedalus after 2500 hacking skill
@@ -271,7 +305,7 @@ const daedalus = async (app: App, ns: NS) => {
   // Don't do anything if Daedalus mode is disabled
   if (state !== State.Daedalus) return
   const daedalusState = app.getSetting('daedalusState')
-  if (daedalusState === DaedalusState.DisabledThisRun) return
+  if (daedalusState === DaedalusState.DisabledThisRun || daedalusState === DaedalusState.Completed) return
 
   // Stuff that always runs when Daedalus mode is enabled
   const pid = ns.run(`plugins/singularity/getAugmentations.js`)
@@ -290,7 +324,7 @@ const daedalus = async (app: App, ns: NS) => {
     case DaedalusState.None: {
       if (installedAugmentations.includes('The Red Pill')) {
         ns.tprint('The Red Pill is installed, Daedalus mode is now enabled')
-        app.updateSetting('daedalusState', DaedalusState.InstalledRedPill)
+        app.updateSetting('daedalusState', DaedalusState.UnlockPrerequisites)
         break
       }
 
@@ -327,7 +361,13 @@ const daedalus = async (app: App, ns: NS) => {
         if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
       }
       app.updateSetting('maxSpendingMode', true)
-      app.updateSetting('daedalusState', DaedalusState.UnlockDonations)
+
+      // Check if it was bought
+      if (installedAugmentations.includes('The Red Pill')) {
+        app.updateSetting('daedalusState', DaedalusState.InstalledRedPill)
+      } else {
+        app.updateSetting('daedalusState', DaedalusState.UnlockDonations)
+      }
 
       break
     }
@@ -394,7 +434,6 @@ const daedalus = async (app: App, ns: NS) => {
         const pid1 = ns.run(`plugins/singularity/getAugmentations.js`)
         if (pid1 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
         const boughtAugmentations = (app.getFact('boughtAugmentations') as string[]) || []
-        ns.tprint('boughtAugmentations', boughtAugmentations)
         if (!boughtAugmentations.includes('The Red Pill')) {
           ns.tprint('❌ something went wrong trying to buy the red pill')
           return
@@ -407,13 +446,11 @@ const daedalus = async (app: App, ns: NS) => {
           let pid = ns.run(`plugins/singularity/getAugmentationPrice.js`, 1, 'NeuroFlux Governor')
           if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
           const price = Number(app.getFact('priceOfNeuroFlux Governor'))
-          ns.tprint('price', price)
 
           // Get reputation requirement
           pid = ns.run(`plugins/singularity/getAugmentationRepReq.js`, 1, 'NeuroFlux Governor')
           if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
           const repReq = Number(app.getFact('repReqOfNeuroFlux Governor'))
-          ns.tprint('repReq', repReq)
 
           if (reputation >= repReq && ns.getPlayer().money >= price) {
             pid = ns.run(`plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')
@@ -432,13 +469,64 @@ const daedalus = async (app: App, ns: NS) => {
     case DaedalusState.BoughtRedPill: {
       ns.tprint('🧬 Installing augmentations.')
       ns.tprint('♻️ Restarting instance.')
+      app.updateSetting('needReset', true)
+      app.updateFact('DaedalusJoined', false)
       const pid = ns.run(`plugins/singularity/installAugmentations.js`, 1)
       if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
       break
     }
     case DaedalusState.InstalledRedPill: {
-      // World daemon
-      ns.tprint('🖲️ Go for world daemon')
+      // Advance to World Daemon when possible
+      if (ns.getHackingLevel() >= 9000) {
+        app.updateSetting('state', State.WorldDaemon)
+        return
+      }
+
+      // Get price of next upgrade
+      let pid = ns.run(`plugins/singularity/getAugmentationPrice.js`, 1, 'NeuroFlux Governor')
+      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      const price = Number(app.getFact('priceOfNeuroFlux Governor'))
+
+      // Prefer upgrading home RAM if a few augments cost more.
+      const nextRamCosts = Number(app.getFact('upgradeRamCost'))
+      if (nextRamCosts > 0 && price * 8 >= nextRamCosts) return
+
+      // Get current reputation
+      pid = ns.run(`plugins/singularity/getFactionReputation.js`, 1, 'Daedalus')
+      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      const reputation = Number(app.getFact('DaedalusReputation'))
+
+      // Get reputation requirement
+      pid = ns.run(`plugins/singularity/getAugmentationRepReq.js`, 1, 'NeuroFlux Governor')
+      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      const repReq = Number(app.getFact('repReqOfNeuroFlux Governor'))
+
+      // Buy Neuroflux Governor
+      if (reputation >= repReq && ns.getPlayer().money >= price) {
+        pid = ns.run(`plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')
+        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        ns.tprint('🧬 Bought neuroflux governor')
+      }
+
+      // Donate excess money
+      const donationAmount = 10e9
+      if (ns.getPlayer().money >= price + donationAmount) {
+        const pid = ns.run(`plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
+        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      }
+
+      // Restart after buying 10 neuroflux governors
+      const boughtAugmentations = (app.getFact('boughtAugmentations') as string[]) || []
+      if (boughtAugmentations.length >= 10) {
+        ns.tprint('🧬 Installing augmentations.')
+        ns.tprint('♻️ Restarting instance.')
+        app.updateSetting('needReset', true)
+        app.updateSetting('DaedalusJoined', false)
+        const pid = ns.run(`plugins/singularity/installAugmentations.js`, 1)
+        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        break
+      }
+
       break
     }
   }
@@ -448,6 +536,7 @@ export async function main(ns: NS) {
   const app = await createApp(ns)
   await app.openWindow(0, 1)
   const f = app.formatters
+  ns.disableLog('run')
 
   // Show all prices once
   app.log('Purchased server costs:')
@@ -460,6 +549,11 @@ export async function main(ns: NS) {
   app.log('\n')
   app.log('🏃 Running...')
 
+  // Todo - remove
+  //  - hacknet (ns)	4.00GB
+  //  - getPurchasedServers (fn)	2.25GB
+  //  - purchaseServer (fn)	2.25GB
+
   let interval = -1
   while (true) {
     interval++
@@ -467,6 +561,7 @@ export async function main(ns: NS) {
     const { buyHardware, buyHacknetNodes } = app.getSettings()
 
     await daedalus(app, ns)
+    await worldDaemon(app, ns)
     await augmentations(app, ns)
     if (interval % 10 === 0) await factions(app, ns)
     await objectives(app, ns)

@@ -60,12 +60,12 @@ export const getMilestones = (ns: NS): Milestone[] => [
     target: 'zeus-med',
     achieved: () =>
       ns.getServerSecurityLevel('zeus-med') === ns.getServerMinSecurityLevel('zeus-med') ||
-      (ns.getPlayer().money > 500e9 && ns.hasRootAccess('ecorp')),
+      (ns.getHackingLevel() > 3000 && ns.hasRootAccess('ecorp')),
   },
   {
     goal: 'get to hacking level xxx while spending everything',
     target: 'zeus-med',
-    achieved: () => ns.getPlayer().money > 500e9 && ns.hasRootAccess('ecorp'),
+    achieved: () => ns.getHackingLevel() > 3000 && ns.hasRootAccess('ecorp'),
   },
   {
     goal: 'weaken ecorp',

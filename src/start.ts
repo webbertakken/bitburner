@@ -1,12 +1,11 @@
 import { createApp } from '@/core/app'
 import { runLocal } from '@/core/runLocal'
 import { getMilestones, Milestone } from '@/config/strategy'
-import { settings } from '@/config/settings'
 import { NS } from '@ns'
+import { settings } from '@/config/settings'
 
 export async function main(ns: NS) {
-  const [preserveSettings] = ns.args as [boolean]
-  const app = await createApp(ns, preserveSettings ? null : settings)
+  const app = await createApp(ns, settings)
   await app.openWindow(0)
   const self = 'home'
   ns.clearLog()
