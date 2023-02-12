@@ -2,7 +2,7 @@ import { createApp } from '@/core/app'
 import { getNodeInfo } from '@/core/getNodeInfo'
 import { NS } from '@ns'
 import { createScanner } from '@/core/scanner'
-import { spawnRemote } from '@/core/runLocal'
+import { spawnRemote } from '@/core/run'
 
 const SECONDS = 1000
 
@@ -89,7 +89,7 @@ const createWorm = (app: App, ns: NS) => {
       { script: '/core/app.js', remoteScript: '/core/app.js' },
       { script: '/core/fillAllocation.js', remoteScript: '/core/fillAllocation.js' },
       { script: '/core/getMaxThreads.js', remoteScript: '/core/getMaxThreads.js' },
-      { script: '/core/runLocal.js', remoteScript: '/core/runLocal.js' },
+      { script: '/core/run.js', remoteScript: '/core/run.js' },
       { script: '/core/getFormatters.js', remoteScript: '/core/getFormatters.js' },
       { script: '/dist/weaken.js', remoteScript: 'weaken.js' },
       { script: '/dist/grow.js', remoteScript: 'grow.js' },
@@ -161,7 +161,7 @@ const createWorm = (app: App, ns: NS) => {
       }
 
       registry.isInitialRun = false
-      await ns.sleep(12 * SECONDS)
+      await ns.sleep(5 * SECONDS)
     },
   }
 }

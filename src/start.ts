@@ -1,5 +1,5 @@
 import { createApp } from '@/core/app'
-import { runLocal, spawnLocal } from '@/core/runLocal'
+import { runLocal, spawnLocal } from '@/core/run'
 import { getMilestones, Milestone } from '@/config/strategy'
 import { NS } from '@ns'
 import { settings } from '@/config/settings'

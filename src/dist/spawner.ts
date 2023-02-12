@@ -1,6 +1,6 @@
 import { fillAllocation } from '@/core/fillAllocation'
 import { NS } from '@ns'
-import { spawnLocal } from '@/core/runLocal'
+import { spawnLocal } from '@/core/run'
 
 export async function main(ns: NS) {
   const self = ns.getHostname()

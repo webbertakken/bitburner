@@ -1,6 +1,6 @@
 import { NS } from '@ns'
 import { lookup } from '@/tools/lookup'
-import { runLocal } from '@/core/runLocal'
+import { runLocal } from '@/core/run'
 import { createApp } from '@/core/app'
 
 export const main = async (ns: NS) => {

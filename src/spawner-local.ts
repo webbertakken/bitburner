@@ -1,5 +1,5 @@
 import { createApp } from '@/core/app'
-import { spawnLocal } from '@/core/runLocal'
+import { spawnLocal } from '@/core/run'
 import { fillAllocation } from '@/core/fillAllocation'
 import { NS } from '@ns'
 

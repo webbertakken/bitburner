@@ -6,7 +6,7 @@ const runBase = (ns: NS, script: string, host: string, threads = 1, ...args: Scr
 }
 
 export const spawnLocal = (ns: NS, script: string, threads = 1, ...args: ScriptArg[]) => {
-  return runBase(ns, script, 'home', threads, ...args)
+  return runBase(ns, script, ns.getHostname(), threads, ...args)
 }
 
 export const spawnRemote = (ns: NS, remoteScript: string, remoteHost: string, threads = 1, ...args: ScriptArg[]) => {
@@ -21,7 +21,7 @@ export const spawnRemote = (ns: NS, remoteScript: string, remoteHost: string, th
 }
 
 export const runRemote = async (ns: NS, script: string, host: string, threads = 1, ...args: ScriptArg[]) => {
-  const pid = runBase(ns, script, 'home', threads, ...args)
+  const pid = runBase(ns, script, host, threads, ...args)
 
   // Wait for the script to finish
   if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
@@ -31,5 +31,5 @@ export const runRemote = async (ns: NS, script: string, host: string, threads = 
 }
 
 export const runLocal = async (ns: NS, script: string, threads = 1, ...args: ScriptArg[]) => {
-  return runRemote(ns, script, 'home', threads, ...args)
+  return runRemote(ns, script, ns.getHostname(), threads, ...args)
 }

@@ -1,5 +1,5 @@
 import { createApp } from '@/core/app'
-import { runLocal } from '@/core/runLocal'
+import { runLocal } from '@/core/run'
 import { NS } from '@ns'
 
 /**

@@ -1,7 +1,7 @@
 import { NS } from '@ns'
 import { State } from '@/config/settings'
 import { createApp } from '@/core/app'
-import { runLocal } from '@/core/runLocal'
+import { runLocal } from '@/core/run'
 
 export const main = async (ns: NS) => {
   const app = await createApp(ns)
