@@ -1,5 +1,6 @@
 import { fillAllocation } from '@/core/fillAllocation'
 import { NS } from '@ns'
+import { spawnLocal } from '@/core/runLocal'
 
 export async function main(ns: NS) {
   const self = ns.getHostname()
@@ -11,7 +12,7 @@ export async function main(ns: NS) {
   }
 
   if (ns.getServerMaxRam(self) > 500) {
-    ns.run('collector.js', 200, target)
+    spawnLocal(ns, 'collector.js', 200, target)
   } else {
     await fillAllocation(ns, ['collector.js', target], 0.3)
   }

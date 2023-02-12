@@ -1,6 +1,7 @@
 import { NS } from '@ns'
 import { DaedalusState, State } from '@/config/settings'
 import { createApp } from '@/core/app'
+import { runLocal } from '@/core/runLocal'
 
 export const main = async (ns: NS) => {
   const app = await createApp(ns)
@@ -18,11 +19,8 @@ export const main = async (ns: NS) => {
   if (daedalusState === DaedalusState.DisabledThisRun || daedalusState === DaedalusState.Completed) return
 
   // Stuff that always runs when Daedalus mode is enabled
-  const pid = ns.run(`plugins/singularity/getAugmentations.js`)
-  if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
-
-  const pid2 = ns.run(`plugins/singularity/getFactionAugmentations.js`, 1, 'Daedalus')
-  if (pid2 > 0) while (ns.isRunning(pid2)) await ns.sleep(1)
+  await runLocal(ns, `plugins/singularity/getAugmentations.js`)
+  await runLocal(ns, `plugins/singularity/getFactionAugmentations.js`, 1, 'Daedalus')
 
   const allDaedalusAugmentations = (app.getFact('allDaedalusAugmentations') as string[]) || []
   const allBoughtAugmentations = (app.getFact('allBoughtAugmentations') as string[]) || []
@@ -67,8 +65,7 @@ export const main = async (ns: NS) => {
       // After joining
       const workingFor = app.getFact('workingFor')
       if (workingFor !== 'Daedalus') {
-        const pid = ns.run(`plugins/singularity/workForFaction.js`)
-        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        await runLocal(ns, `plugins/singularity/workForFaction.js`)
       }
       app.updateSetting('maxSpendingMode', true)
 
@@ -83,8 +80,7 @@ export const main = async (ns: NS) => {
     }
     case DaedalusState.UnlockDonations: {
       // If we have enough augments, go for red pill
-      const pid = ns.run(`plugins/singularity/getFactionFavour.js`, 1, 'Daedalus')
-      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      await runLocal(ns, `plugins/singularity/getFactionFavour.js`, 1, 'Daedalus')
       const daedalusFavour = Number(app.getFact('DaedalusFavour'))
 
       if (daedalusFavour >= 10 || numDaedalusAugments >= 2) {
@@ -122,14 +118,12 @@ export const main = async (ns: NS) => {
 
       const donationAmount = 10e9
 
-      const pid = ns.run(`plugins/singularity/getFactionReputation.js`, 1, 'Daedalus')
-      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      await runLocal(ns, `plugins/singularity/getFactionReputation.js`, 1, 'Daedalus')
       const reputation = Number(app.getFact('DaedalusReputation'))
 
       // Donate until 2.5M reputation
       if (ns.getPlayer().money >= donationAmount && reputation < 2.5e6) {
-        const pid = ns.run(`plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
-        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        await runLocal(ns, `plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
       }
 
       // Save 200B to buy Neuroflux Governors along with the red pill.
@@ -137,12 +131,10 @@ export const main = async (ns: NS) => {
       if (reputation >= 2.5e6 && ns.getPlayer().money >= 200e9) {
         // Buy Red Pill
         ns.tprint('🧬 Buy red pill augmentation')
-        const pid = ns.run(`plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'The Red Pill')
-        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        await runLocal(ns, `plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'The Red Pill')
 
         // Check if it was bought
-        const pid1 = ns.run(`plugins/singularity/getAugmentations.js`)
-        if (pid1 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
+        await runLocal(ns, `plugins/singularity/getAugmentations.js`)
         const boughtAugmentations = (app.getFact('boughtAugmentations') as string[]) || []
         if (!boughtAugmentations.includes('The Red Pill')) {
           ns.tprint('❌ something went wrong trying to buy the red pill')
@@ -153,18 +145,15 @@ export const main = async (ns: NS) => {
         ns.tprint('💡 Buying neuroflux governors with the rest of them money')
         while (true) {
           // Get price
-          let pid = ns.run(`plugins/singularity/getAugmentationPrice.js`, 1, 'NeuroFlux Governor')
-          if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+          await runLocal(ns, `plugins/singularity/getAugmentationPrice.js`, 1, 'NeuroFlux Governor')
           const price = Number(app.getFact('priceOfNeuroFlux Governor'))
 
           // Get reputation requirement
-          pid = ns.run(`plugins/singularity/getAugmentationRepReq.js`, 1, 'NeuroFlux Governor')
-          if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+          await runLocal(ns, `plugins/singularity/getAugmentationRepReq.js`, 1, 'NeuroFlux Governor')
           const repReq = Number(app.getFact('repReqOfNeuroFlux Governor'))
 
           if (reputation >= repReq && ns.getPlayer().money >= price) {
-            pid = ns.run(`plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')
-            if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+            await runLocal(ns, `plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')
             ns.tprint('🧬 Bought neuroflux governor')
           } else {
             break
@@ -180,8 +169,7 @@ export const main = async (ns: NS) => {
       ns.tprint('🧬 Installing augmentations.')
       ns.tprint('♻️ Restarting instance.')
       app.updateSetting('needsReset', true)
-      const pid = ns.run(`plugins/singularity/installAugmentations.js`, 1)
-      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      await runLocal(ns, `plugins/singularity/installAugmentations.js`, 1)
       break
     }
     case DaedalusState.InstalledRedPill: {
@@ -192,8 +180,7 @@ export const main = async (ns: NS) => {
       }
 
       // Get price of next upgrade
-      let pid = ns.run(`plugins/singularity/getAugmentationPrice.js`, 1, 'NeuroFlux Governor')
-      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      await runLocal(ns, `plugins/singularity/getAugmentationPrice.js`, 1, 'NeuroFlux Governor')
       const price = Number(app.getFact('priceOfNeuroFlux Governor'))
 
       // Prefer upgrading home RAM if a few augments cost more.
@@ -201,27 +188,24 @@ export const main = async (ns: NS) => {
       if (nextRamCosts > 0 && price * 8 >= nextRamCosts) return
 
       // Get current reputation
-      pid = ns.run(`plugins/singularity/getFactionReputation.js`, 1, 'Daedalus')
-      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      await runLocal(ns, `plugins/singularity/getFactionReputation.js`, 1, 'Daedalus')
       const reputation = Number(app.getFact('DaedalusReputation'))
 
       // Get reputation requirement
-      pid = ns.run(`plugins/singularity/getAugmentationRepReq.js`, 1, 'NeuroFlux Governor')
-      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      await runLocal(ns, `plugins/singularity/getAugmentationRepReq.js`, 1, 'NeuroFlux Governor')
       const repReq = Number(app.getFact('repReqOfNeuroFlux Governor'))
 
       // Buy Neuroflux Governor
       if (reputation >= repReq && ns.getPlayer().money >= price) {
-        pid = ns.run(`plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')
-        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
-        ns.tprint('🧬 Bought neuroflux governor')
+        if (await runLocal(ns, `plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')) {
+          ns.tprint('🧬 Bought neuroflux governor')
+        }
       }
 
       // Donate excess money
       const donationAmount = 10e9
       if (ns.getPlayer().money >= price + donationAmount) {
-        const pid = ns.run(`plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
-        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        await runLocal(ns, `plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
       }
 
       // Restart after buying 10 neuroflux governors
@@ -230,8 +214,7 @@ export const main = async (ns: NS) => {
         ns.tprint('🧬 Installing augmentations.')
         ns.tprint('♻️ Restarting instance.')
         app.updateSetting('needsReset', true)
-        const pid = ns.run(`plugins/singularity/installAugmentations.js`, 1)
-        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+        await runLocal(ns, `plugins/singularity/installAugmentations.js`, 1)
         break
       }
 

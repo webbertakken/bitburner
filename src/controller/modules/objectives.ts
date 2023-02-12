@@ -1,5 +1,6 @@
 import { NS } from '@ns'
 import { createApp } from '@/core/app'
+import { runLocal } from '@/core/runLocal'
 
 export const main = async (ns: NS) => {
   const app = await createApp(ns)
@@ -15,16 +16,13 @@ export const main = async (ns: NS) => {
     if (app.getFact(factName) === true) continue
     if (ns.getHackingLevel() < reqHackingLevel || !ns.hasRootAccess(host)) continue
 
-    const pid1 = ns.run(`plugins/singularity/connect.js`, 1, path)
-    if (pid1 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
-
-    const pid2 = ns.run(`plugins/singularity/backdoor.js`)
-    if (pid2 > 0) {
-      while (ns.isRunning(pid2)) await ns.sleep(1)
+    if (
+      (await runLocal(ns, `plugins/singularity/connect.js`, 1, path)) &&
+      (await runLocal(ns, `plugins/singularity/backdoor.js`))
+    ) {
       app.updateFact(factName, true)
     }
 
-    const pid3 = ns.run(`plugins/singularity/connect.js`)
-    if (pid3 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
+    await runLocal(ns, `plugins/singularity/connect.js`)
   }
 }

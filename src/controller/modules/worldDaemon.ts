@@ -1,6 +1,7 @@
 import { NS } from '@ns'
 import { State } from '@/config/settings'
 import { createApp } from '@/core/app'
+import { runLocal } from '@/core/runLocal'
 
 export const main = async (ns: NS) => {
   const app = await createApp(ns)
@@ -13,8 +14,7 @@ export const main = async (ns: NS) => {
   // Connect
   const { path } = app.getFact('The-Cave') as NodeInfo
   const worldDaemonPath = `${path} w0r1d_d43m0n`
-  const pid1 = ns.run(`plugins/singularity/connect.js`, 1, worldDaemonPath)
-  if (pid1 > 0) while (ns.isRunning(pid1)) await ns.sleep(1)
+  await runLocal(ns, `plugins/singularity/connect.js`, 1, worldDaemonPath)
 
   // Nuke
   ns.brutessh('w0r1d_d43m0n')
@@ -25,6 +25,5 @@ export const main = async (ns: NS) => {
   ns.nuke('w0r1d_d43m0n')
 
   // Backdoor
-  const pid2 = ns.run(`plugins/singularity/backdoor.js`)
-  if (pid2 > 0) while (ns.isRunning(pid2)) await ns.sleep(1)
+  await runLocal(ns, `plugins/singularity/backdoor.js`)
 }

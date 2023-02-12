@@ -1,4 +1,4 @@
-import { runLocal, spawnLocal } from '@/core/runLocal'
+import { spawnLocal } from '@/core/runLocal'
 import { NS, ScriptArg } from '@ns'
 
 export const fillAllocation = async (ns: NS, script: [string, ...ScriptArg[]], utilisation = 1, reserve = 0) => {

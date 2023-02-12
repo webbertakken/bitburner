@@ -1,8 +1,8 @@
 import { createApp } from '@/core/app'
 import { getNodeInfo } from '@/core/getNodeInfo'
-import { runRemote } from '@/core/runRemote'
 import { NS } from '@ns'
 import { createScanner } from '@/core/scanner'
+import { spawnRemote } from '@/core/runLocal'
 
 const SECONDS = 1000
 
@@ -106,7 +106,7 @@ const createWorm = (app: App, ns: NS) => {
 
     // Run script
     const { remoteScript } = scripts.find(({ init }) => init)!
-    runRemote(ns, remoteScript, host, 1, registry.target, registry.type || '')
+    spawnRemote(ns, remoteScript, host, 1, registry.target, registry.type || '')
     app.log(`📦 Deployed payload to ${host}`)
   }
 
@@ -137,7 +137,7 @@ const createWorm = (app: App, ns: NS) => {
   }
 
   return {
-    run: async (target: string, type: string) => {
+    runWorm: async (target: string, type: string) => {
       registry.target = target
       registry.type = type
       registry.self = await scanSelf()
@@ -176,7 +176,7 @@ export async function main(ns: NS) {
   app.log(`🏃 Running...`)
 
   while (true) {
-    await worm.run(target, type)
+    await worm.runWorm(target, type)
     await ns.sleep(1000)
   }
 }

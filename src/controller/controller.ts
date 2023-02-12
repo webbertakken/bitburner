@@ -22,9 +22,6 @@ export async function main(ns: NS) {
   const plugins = app.getPlugins()
   const self = 'home'
 
-  ns.disableLog('run')
-  ns.disableLog('exec')
-
   app.log('🏃 Running...')
 
   while (true) {
