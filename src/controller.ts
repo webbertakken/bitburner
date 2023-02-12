@@ -88,14 +88,14 @@ const unlocks = async (app: App, ns: NS) => {
       }
     }
 
-    // Check RAM cost
+    // Check CPU cost
     if (!upgradeCpuCost) {
       const pid = ns.run(`plugins/singularity/getHomeCpuCost.js`, 1)
       if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
       upgradeCpuCost = app.getFact('upgradeCpuCost')
     }
 
-    // Upgrade RAM
+    // Upgrade CPU
     if (upgradeCpuCost && ns.getPlayer().money >= upgradeCpuCost) {
       if (ramFree >= 50) {
         const pid = ns.run(`plugins/singularity/purchaseHomeCpu.js`, 1)
