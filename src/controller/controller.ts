@@ -14,6 +14,10 @@ const augmentations = async (ns: NS) => {
   // Todo - Sector-12
   //  - Neuralstimulator (12% hack xp) ----
   //  - CashRoot Starter Kit (1M + BruteSSH.exe)
+  // Todo - Tian Di Hui
+  //  - Neuroreceptor Management Implant (passive faction work)
+  //  - Social Negotiation Assistant (S.N.A) (15% faction rep)
+  //  - ADR-V1 Pheromone Gene (10% faction rep)
 }
 
 export async function main(ns: NS) {

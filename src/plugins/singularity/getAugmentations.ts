@@ -36,6 +36,15 @@ export async function main(ns: NS) {
       app.updateFact('numBoughtAugmentations', numBoughtAugmentations, true)
       ns.tprint(`🧬 Bought ${numBoughtAugmentations} augmentations so far (not counting NeuroFlux Governor).`)
     }
+
+    /**
+     * Specific augmentations that change gameplay mechanics
+     */
+
+    // Removes penalty for working unfocused
+    if (installedAugmentations.includes('Neuroreceptor Management Implant')) {
+      app.updateFact('hasNeuroreceptorManagementImplant', true, true)
+    }
   } catch (error: any) {
     ns.tprint(`❌ Failed to update owned augmentations stats. ${error.message}`)
   }

@@ -2,6 +2,7 @@ import { NS } from '@ns'
 import { DaedalusState, State } from '@/config/settings'
 import { createApp } from '@/core/app'
 import { runLocal } from '@/core/run'
+import { FactionWorkType } from '@/plugins/singularity/workForFaction'
 
 export const main = async (ns: NS) => {
   const app = await createApp(ns)
@@ -65,7 +66,8 @@ export const main = async (ns: NS) => {
       // After joining
       const workingFor = app.getFact('workingFor')
       if (workingFor !== 'Daedalus') {
-        await runLocal(ns, `plugins/singularity/workForFaction.js`)
+        const focus = !app.getFact('hasNeuroreceptorManagementImplant')
+        await runLocal(ns, `plugins/singularity/workForFaction.js`, 1, 'Daedalus', FactionWorkType.hacking, focus)
       }
       app.updateSetting('maxSpendingMode', true)
 

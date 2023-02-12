@@ -1,6 +1,7 @@
 import { NS } from '@ns'
 import { createApp } from '@/core/app'
 import { runLocal } from '@/core/run'
+import { FactionWorkType } from '@/plugins/singularity/workForFaction'
 
 export const main = async (ns: NS) => {
   const app = await createApp(ns)
@@ -16,7 +17,18 @@ export const main = async (ns: NS) => {
       if (!(await runLocal(ns, `plugins/singularity/joinFaction.js`, 1, factionInvitations[0]))) return
 
       // Work for faction
-      if (!(await runLocal(ns, `plugins/singularity/workForFaction.js`, 1, factionInvitations[0]))) return
+      const focus = !app.getFact('hasNeuroreceptorManagementImplant')
+      if (
+        !(await runLocal(
+          ns,
+          `plugins/singularity/workForFaction.js`,
+          1,
+          factionInvitations[0],
+          FactionWorkType.hacking,
+          focus,
+        ))
+      )
+        return
     }
 
     await ns.sleep(10)
