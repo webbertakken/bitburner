@@ -1,13 +1,17 @@
 import { NS, ScriptArg } from '@ns'
 
-export const runLocal = (ns: NS, script: string, threads = 1, ...args: ScriptArg[]) => {
-  ns.disableLog('run')
-  const pid = ns.run(script, threads, ...args)
+export const runLocal = async (ns: NS, script: string, threads = 1, ...args: ScriptArg[]) => {
+  ns.disableLog('exec')
 
-  if (pid === 0) {
-    ns.tprint(`❌: ${script} failed to run. Most likely out of RAM.`)
-    // ns.exit()
-  }
+  const pid = ns.exec(script, 'home', threads, ...args)
+  if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+  else ns.tprint(`❌: Failed to run ${script}. Most likely out of RAM.`)
 
   return pid
+}
+
+export const spawnLocal = (ns: NS, script: string, threads = 1, ...args: ScriptArg[]) => {
+  ns.disableLog('exec')
+
+  return ns.exec(script, 'home', threads, ...args)
 }

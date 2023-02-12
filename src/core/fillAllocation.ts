@@ -1,4 +1,4 @@
-import { runLocal } from '@/core/runLocal'
+import { runLocal, spawnLocal } from '@/core/runLocal'
 import { NS, ScriptArg } from '@ns'
 
 export const fillAllocation = async (ns: NS, script: [string, ...ScriptArg[]], utilisation = 1, reserve = 0) => {
@@ -18,12 +18,12 @@ export const fillAllocation = async (ns: NS, script: [string, ...ScriptArg[]], u
   // Spawn full pools of threads
   const numInstances = Math.floor(threads / poolSize)
   for (let i = 0; i < numInstances; i++) {
-    runLocal(ns, scriptName, poolSize, ...[...args, i])
+    spawnLocal(ns, scriptName, poolSize, ...[...args, i])
   }
 
   // Spawn remaining threads
   const instanceRest = threads % poolSize
-  if (instanceRest > 0) runLocal(ns, scriptName, instanceRest, ...[...args, numInstances])
+  if (instanceRest > 0) spawnLocal(ns, scriptName, instanceRest, ...[...args, numInstances])
 
   await ns.sleep(2)
 }

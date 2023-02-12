@@ -24,7 +24,7 @@ export async function main(ns: NS) {
 
   // Register plugins
   for (const { name } of plugins) {
-    runLocal(ns, `plugins/${name}/register.js`)
+    await runLocal(ns, `plugins/${name}/register.js`)
   }
 
   await ns.sleep(1)

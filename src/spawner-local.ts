@@ -1,5 +1,5 @@
 import { createApp } from '@/core/app'
-import { runLocal } from '@/core/runLocal'
+import { spawnLocal } from '@/core/runLocal'
 import { fillAllocation } from '@/core/fillAllocation'
 import { NS } from '@ns'
 
@@ -15,7 +15,7 @@ const spawnCollector = async (app: App, ns: NS, target: string, reserve = 0) => 
   const maxThreads = ns.getPlayer().money < 1e9 ? 200 : Number.POSITIVE_INFINITY
   const threads = Math.min(Math.floor(free / cost), maxThreads)
 
-  runLocal(ns, '/dist/collector.js', threads, target)
+  spawnLocal(ns, '/dist/collector.js', threads, target)
   await ns.sleep(1)
 }
 

@@ -14,5 +14,5 @@ export const main = async (ns: NS) => {
   }
 
   const path = node.path.split(' ')
-  runLocal(ns, 'plugins/singularity/connect.js', 1, ...path)
+  await runLocal(ns, 'plugins/singularity/connect.js', 1, ...path)
 }
