@@ -6,5 +6,5 @@ export async function main(ns: NS) {
   const t = app.formatters
   const upgradeRamCost = ns.singularity.getUpgradeHomeRamCost()
   app.updateFact('upgradeRamCost', upgradeRamCost)
-  ns.tprint(`🛈 Next RAM upgrade costs ${t.money(upgradeRamCost)}.`)
+  ns.tprint(`ℹ️ Next RAM upgrade costs ${t.money(upgradeRamCost)}.`)
 }

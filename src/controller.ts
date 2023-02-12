@@ -61,15 +61,13 @@ const objectives = async (app: App, ns: NS) => {
 }
 
 const unlocks = async (app: App, ns: NS) => {
-  const f = app.formatters
+  const plugins = app.getPlugins()
+  // Requires This singularity function requires Source-File 4 to run. A power up you obtain later in the game.
+  if (!plugins.singularity) return
 
   const { maxSpendingMode, upgradeHome } = app.getSettings()
   let upgradeRamCost = app.getFact('upgradeRamCost')
-
-  const plugins = app.getPlugins()
-
-  // Requires This singularity function requires Source-File 4 to run. A power up you obtain later in the game.
-  if (!plugins.singularity) return
+  let upgradeCpuCost = app.getFact('upgradeCpuCost')
 
   const ramFree = ns.getServerMaxRam('home') - ns.getServerUsedRam('home')
   if (upgradeHome && maxSpendingMode) {
@@ -86,12 +84,26 @@ const unlocks = async (app: App, ns: NS) => {
         const pid = ns.run(`plugins/singularity/purchaseHomeRam.js`, 1)
         if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
       } else {
-        ns.tprint(`⚠️ Trying to upgrade ram, but can't because of irony.`)
+        ns.tprint(`⚠️ Trying to upgrade RAM, but can't because of irony.`)
       }
     }
 
-    // Todo - Upgrade CPU
-    // Todo - Get the free faction thingy
+    // Check RAM cost
+    if (!upgradeCpuCost) {
+      const pid = ns.run(`plugins/singularity/getHomeCpuCost.js`, 1)
+      if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      upgradeCpuCost = app.getFact('upgradeCpuCost')
+    }
+
+    // Upgrade RAM
+    if (upgradeCpuCost && ns.getPlayer().money >= upgradeCpuCost) {
+      if (ramFree >= 50) {
+        const pid = ns.run(`plugins/singularity/purchaseHomeCpu.js`, 1)
+        if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
+      } else {
+        ns.tprint(`⚠️ Trying to upgrade CPU, but can't because of insufficient RAM available.`)
+      }
+    }
   }
 
   // TOR Router
@@ -469,8 +481,7 @@ const daedalus = async (app: App, ns: NS) => {
     case DaedalusState.BoughtRedPill: {
       ns.tprint('🧬 Installing augmentations.')
       ns.tprint('♻️ Restarting instance.')
-      app.updateSetting('needReset', true)
-      app.updateFact('DaedalusJoined', false)
+      app.updateSetting('needsReset', true)
       const pid = ns.run(`plugins/singularity/installAugmentations.js`, 1)
       if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
       break
@@ -520,8 +531,7 @@ const daedalus = async (app: App, ns: NS) => {
       if (boughtAugmentations.length >= 10) {
         ns.tprint('🧬 Installing augmentations.')
         ns.tprint('♻️ Restarting instance.')
-        app.updateSetting('needReset', true)
-        app.updateSetting('DaedalusJoined', false)
+        app.updateSetting('needsReset', true)
         const pid = ns.run(`plugins/singularity/installAugmentations.js`, 1)
         if (pid > 0) while (ns.isRunning(pid)) await ns.sleep(1)
         break
