@@ -101,6 +101,7 @@ const createWorm = (app: App, ns: NS) => {
       const uploadSuccess = ns.scp(script, host, self)
       if (!uploadSuccess) throw new Error(`Failed to upload ${script} to ${host}`)
       if (remoteScript !== script) ns.mv(host, script, remoteScript)
+      await ns.sleep(1)
     }
 
     // Run script
@@ -131,6 +132,7 @@ const createWorm = (app: App, ns: NS) => {
           app.updateFact(node.id, node, true)
         }
       }
+      await ns.sleep(2)
     }
   }
 

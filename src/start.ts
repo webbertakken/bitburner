@@ -41,13 +41,9 @@ export async function main(ns: NS) {
 
     // Run home scripts.
     runLocal(ns, 'plugins/register.js')
-    await ns.sleep(10)
     runLocal(ns, 'monitor.js', 1, target)
-    await ns.sleep(10)
     runLocal(ns, 'worm.js', 1, target, type)
-    await ns.sleep(10)
-    runLocal(ns, 'controller.js', 1)
-    await ns.sleep(10)
+    runLocal(ns, 'controller/controller.js', 1)
     runLocal(ns, 'spawner-local.js', 1, target, type, reserve)
 
     // Wait for milestone to be achieved
