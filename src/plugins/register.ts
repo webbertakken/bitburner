@@ -15,6 +15,7 @@ export async function main(ns: NS) {
     { name: 'base', defaultSettings: false },
     { name: 'hacknet', defaultSettings: false },
     { name: 'singularity', defaultSettings: false },
+    { name: 'gangs', defaultSettings: false },
   ]
 
   // Register defaults

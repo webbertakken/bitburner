@@ -5,6 +5,7 @@ import { main as worldDaemon } from '@/controller/modules/worldDaemon'
 import { main as daedalus } from '@/controller/modules/daedalus'
 import { main as factions } from '@/controller/modules/factions'
 import { main as objectives } from '@/controller/modules/objectives'
+import { runLocal } from '@/core/run'
 
 const augmentations = async (ns: NS) => {
   // Todo - Chongqing
@@ -31,15 +32,23 @@ export async function main(ns: NS) {
   while (true) {
     const { buyHardware, buyHacknetNodes } = app.getSettings()
 
-    // Most automations require the singularity.
-    // Requires Source-File 4 to run. A power up you in BitNode-4
-    if (plugins.singularity) {
-      await daedalus(ns)
-      await worldDaemon(ns)
-      await augmentations(ns)
-      await factions(ns)
-      await objectives(ns)
-      await unlocks(ns)
+    if (ns.getServerMaxRam(self) >= 64) {
+      // Most automations require the singularity.
+      // Requires Source-File 4 to run. A power up you in BitNode-4
+      if (plugins.singularity) {
+        await daedalus(ns)
+        await worldDaemon(ns)
+        await augmentations(ns)
+        await factions(ns)
+        await objectives(ns)
+        await unlocks(ns)
+      }
+    }
+
+    if (ns.getServerMaxRam(self) >= 128) {
+      if (plugins.gangs) {
+        await runLocal(ns, 'controller/modules/gangs.js')
+      }
     }
 
     if (buyHardware) {

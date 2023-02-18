@@ -16,19 +16,20 @@ export const main = async (ns: NS) => {
     if (factionInvitations.length >= 1) {
       if (!(await runLocal(ns, `plugins/singularity/joinFaction.js`, 1, factionInvitations[0]))) return
 
-      // Work for faction
-      const focus = !app.getFact('hasNeuroreceptorManagementImplant')
-      if (
-        !(await runLocal(
-          ns,
-          `plugins/singularity/workForFaction.js`,
-          1,
-          factionInvitations[0],
-          FactionWorkType.hacking,
-          focus,
-        ))
-      )
-        return
+      // // Work for faction
+      // const focus = !app.getFact('hasNeuroreceptorManagementImplant')
+      // if (
+      //   !(await runLocal(
+      //     ns,
+      //     `plugins/singularity/workForFaction.js`,
+      //     1,
+      //     factionInvitations[0],
+      //     FactionWorkType.hacking,
+      //     focus,
+      //   ))
+      // ) {
+      //   return
+      // }
     }
 
     await ns.sleep(10)

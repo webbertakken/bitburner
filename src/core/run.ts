@@ -6,7 +6,12 @@ const runBase = (ns: NS, script: string, host: string, threads = 1, ...args: Scr
 }
 
 export const spawnLocal = (ns: NS, script: string, threads = 1, ...args: ScriptArg[]) => {
-  return runBase(ns, script, ns.getHostname(), threads, ...args)
+  try {
+    return runBase(ns, script, ns.getHostname(), threads, ...args)
+  } catch (error: any) {
+    ns.tprint(`❌: Failed to spawn ${script}. ${error.message}`)
+    return -1
+  }
 }
 
 export const spawnRemote = (ns: NS, remoteScript: string, remoteHost: string, threads = 1, ...args: ScriptArg[]) => {
