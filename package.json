@@ -20,5 +20,6 @@
     "viteburner": "^0.5.1"
   },
   "author": "Webber <webber@takken.io>",
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "yarn@4.14.1"
 }
