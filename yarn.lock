@@ -498,6 +498,9 @@ __metadata:
     typescript: "npm:^4.9.4"
     vite: "npm:^4.0.4"
     viteburner: "npm:^0.5.1"
+  dependenciesMeta:
+    esbuild:
+      built: true
   languageName: unknown
   linkType: soft
 
