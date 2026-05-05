@@ -20,7 +20,10 @@ type Registry = {
 const createWorm = (app: App, ns: NS) => {
   const registry: Registry = { isInitialRun: true, self: { id: '', hackingLevel: 0 } }
 
-  const scanSelf = async (): Promise<Self> => ({ hackingLevel: ns.getHackingLevel(), id: ns.getHostname() })
+  const scanSelf = async (): Promise<Self> => ({
+    hackingLevel: ns.getHackingLevel(),
+    id: ns.getHostname(),
+  })
 
   const tryGetAccess = async (node: NodeInfo) => {
     if (node.hasRootAccess) {
@@ -81,7 +84,15 @@ const createWorm = (app: App, ns: NS) => {
     if (ns.getServerMaxRam(host) < 8) return
 
     // Skip problematic hosts
-    const exclusions = ['home', 'CSEC', 'the-hub', 'zb-institute', 'solaris', 'univ-energy', 'global-pharm']
+    const exclusions = [
+      'home',
+      'CSEC',
+      'the-hub',
+      'zb-institute',
+      'solaris',
+      'univ-energy',
+      'global-pharm',
+    ]
     if (exclusions.includes(host)) return
 
     // Copy scripts

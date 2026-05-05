@@ -13,7 +13,7 @@ export async function main(ns: NS) {
       // ns.tprint(`🏛️ ${augmentation} price updated.`)
       app.updateFact(augmentationsFactName, repReq, true)
     }
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Could not find reputation requirement of ${augmentation}.`)
   }
 }

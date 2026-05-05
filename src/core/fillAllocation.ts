@@ -1,10 +1,17 @@
 import { spawnLocal } from '@/core/run'
 import { NS, ScriptArg } from '@ns'
 
-export const fillAllocation = async (ns: NS, script: [string, ...ScriptArg[]], utilisation = 1, reserve = 0) => {
+export const fillAllocation = async (
+  ns: NS,
+  script: [string, ...ScriptArg[]],
+  utilisation = 1,
+  reserve = 0,
+) => {
   const [scriptName, ...args] = script
 
-  ns.print(`⚒️ Spawning ${script} ${args.join(' ')} with ${Math.round(utilisation * 100)}% utilisation`)
+  ns.print(
+    `⚒️ Spawning ${script} ${args.join(' ')} with ${Math.round(utilisation * 100)}% utilisation`,
+  )
 
   // Calculate threads
   const self = ns.getHostname()

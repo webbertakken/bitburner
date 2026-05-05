@@ -6,9 +6,10 @@ export async function main(ns: NS) {
   const [faction, amount] = ns.args as [string, number]
   const formattedAmount = app.formatters.money(amount)
   try {
-    if (!ns.singularity.donateToFaction(faction, amount)) throw new Error(`Unable to donate ${formattedAmount}.`)
+    if (!ns.singularity.donateToFaction(faction, amount))
+      throw new Error(`Unable to donate ${formattedAmount}.`)
     ns.tprint(`🏛️ Donated ${formattedAmount} to ${faction}.`)
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Failed to join ${faction}.`)
   }
 }

@@ -13,7 +13,7 @@ export async function main(ns: NS) {
       ns.tprint(`🏛️ ${faction} favour is ${favour}.`)
       app.updateFact(favourFactName, favour, true)
     }
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Failed to update faction favour for ${faction}`)
   }
 }

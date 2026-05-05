@@ -1,4 +1,4 @@
-# Bitburner 
+# Bitburner
 
 AI that will take over the world in a game called Bitburner.
 
@@ -13,7 +13,8 @@ It will open terminals for:
 - Worm (worm.js) - auto discovers nodes on the internet and will attempt to add them to your botnet.
 - Spawner (spawner-local.js) - will fully utilise any resources on the home machine.
 - Collector (collector.js) - will collect money from your servers.
-- Controller (rent-stuff.js) - will use your money to rent and upgrade servers to run workloads and grow your botnet. 
+- Controller (rent-stuff.js) - will use your money to rent and upgrade servers to run workloads and
+  grow your botnet.
 
 ## Setup
 
@@ -23,7 +24,8 @@ Install dependencies
 yarn
 ```
 
-Copy the values from `bitburner-theme.json` (custom dracula based hacker theme) into the game's theme editor.
+Copy the values from `bitburner-theme.json` (custom dracula based hacker theme) into the game's
+theme editor.
 
 ## Usage
 

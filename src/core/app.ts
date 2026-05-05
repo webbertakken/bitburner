@@ -15,7 +15,8 @@ export const createApp = async (ns: NS, settings: Settings | null = null): Promi
   // Settings
   const getSettings = (): Settings => JSON.parse(ns.read(SETTINGS_FILE) || '{}')
   const getSetting = (option: string): Setting => getSettings()[option]
-  const initSettings = (settings: Settings) => ns.write(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'w')
+  const _initSettings = (settings: Settings) =>
+    ns.write(SETTINGS_FILE, JSON.stringify(settings, null, 2), 'w')
   const updateSetting = (option: string, value: Setting) => {
     ns.write(SETTINGS_FILE, JSON.stringify({ ...getSettings(), [option]: value }, null, 2), 'w')
   }

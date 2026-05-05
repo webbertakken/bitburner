@@ -13,7 +13,7 @@ export async function main(ns: NS) {
       ns.tprint(`🏛️ ${faction} augmentations updated.`)
       app.updateFact(augmentationsFactName, augmentations, true)
     }
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Failed to update faction augmentations for ${faction}`)
   }
 }

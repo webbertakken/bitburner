@@ -7,7 +7,9 @@ export const createScanner = (ns: NS) => {
   const scan = (originNode: string): NodeInfo[] => {
     return ns.scan(originNode).map((nodeId: string) => ({
       ...getNodeInfo(ns, nodeId),
-      files: ns.ls(nodeId).filter((file: string) => /^(?!\/core\/)/.test(file) && !whitelist.includes(file)),
+      files: ns
+        .ls(nodeId)
+        .filter((file: string) => /^(?!\/core\/)/.test(file) && !whitelist.includes(file)),
     }))
   }
 

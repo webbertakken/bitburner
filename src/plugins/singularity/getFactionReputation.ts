@@ -13,7 +13,7 @@ export async function main(ns: NS) {
       // ns.tprint(`🏛️ ${faction} reputation is ${reputation} (rounded per 1k).`)
       app.updateFact(reputationFactName, reputation, true)
     }
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Failed to update faction reputation for ${faction}`)
   }
 }

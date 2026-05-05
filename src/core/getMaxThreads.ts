@@ -7,7 +7,9 @@ export const getMaxThreads = async (ns: NS, scriptNameOrRamAmount: string | numb
   const free = max - used
 
   const cost =
-    typeof scriptNameOrRamAmount === 'string' ? ns.getScriptRam(scriptNameOrRamAmount) : scriptNameOrRamAmount
+    typeof scriptNameOrRamAmount === 'string'
+      ? ns.getScriptRam(scriptNameOrRamAmount)
+      : scriptNameOrRamAmount
 
   return Math.floor(free / cost)
 }

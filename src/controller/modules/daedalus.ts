@@ -17,7 +17,8 @@ export const main = async (ns: NS) => {
   // Don't do anything if Daedalus mode is disabled
   if (state !== State.Daedalus) return
   const daedalusState = app.getSetting('daedalusState')
-  if (daedalusState === DaedalusState.DisabledThisRun || daedalusState === DaedalusState.Completed) return
+  if (daedalusState === DaedalusState.DisabledThisRun || daedalusState === DaedalusState.Completed)
+    return
 
   // Stuff that always runs when Daedalus mode is enabled
   await runLocal(ns, `plugins/singularity/getAugmentations.js`)
@@ -26,7 +27,9 @@ export const main = async (ns: NS) => {
   const allDaedalusAugmentations = (app.getFact('allDaedalusAugmentations') as string[]) || []
   const allBoughtAugmentations = (app.getFact('allBoughtAugmentations') as string[]) || []
   const installedAugmentations = (app.getFact('installedAugmentations') as string[]) || []
-  const numDaedalusAugments = allDaedalusAugmentations.filter((a) => allBoughtAugmentations.includes(a)).length
+  const numDaedalusAugments = allDaedalusAugmentations.filter((a) =>
+    allBoughtAugmentations.includes(a),
+  ).length
 
   // State machine for Daedalus states
   switch (daedalusState) {
@@ -67,7 +70,14 @@ export const main = async (ns: NS) => {
       const workingFor = app.getFact('workingFor')
       if (workingFor !== 'Daedalus') {
         const focus = !app.getFact('hasNeuroreceptorManagementImplant')
-        await runLocal(ns, `plugins/singularity/workForFaction.js`, 1, 'Daedalus', FactionWorkType.hacking, focus)
+        await runLocal(
+          ns,
+          `plugins/singularity/workForFaction.js`,
+          1,
+          'Daedalus',
+          FactionWorkType.hacking,
+          focus,
+        )
       }
       app.updateSetting('maxSpendingMode', true)
 
@@ -133,7 +143,13 @@ export const main = async (ns: NS) => {
       if (reputation >= 2.5e6 && ns.getPlayer().money >= 200e9) {
         // Buy Red Pill
         ns.tprint('🧬 Buy red pill augmentation')
-        await runLocal(ns, `plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'The Red Pill')
+        await runLocal(
+          ns,
+          `plugins/singularity/buyFactionAugmentation.js`,
+          1,
+          'Daedalus',
+          'The Red Pill',
+        )
 
         // Check if it was bought
         await runLocal(ns, `plugins/singularity/getAugmentations.js`)
@@ -151,11 +167,22 @@ export const main = async (ns: NS) => {
           const price = Number(app.getFact('priceOfNeuroFlux Governor'))
 
           // Get reputation requirement
-          await runLocal(ns, `plugins/singularity/getAugmentationRepReq.js`, 1, 'NeuroFlux Governor')
+          await runLocal(
+            ns,
+            `plugins/singularity/getAugmentationRepReq.js`,
+            1,
+            'NeuroFlux Governor',
+          )
           const repReq = Number(app.getFact('repReqOfNeuroFlux Governor'))
 
           if (reputation >= repReq && ns.getPlayer().money >= price) {
-            await runLocal(ns, `plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')
+            await runLocal(
+              ns,
+              `plugins/singularity/buyFactionAugmentation.js`,
+              1,
+              'Daedalus',
+              'NeuroFlux Governor',
+            )
             ns.tprint('🧬 Bought neuroflux governor')
           } else {
             break
@@ -199,7 +226,15 @@ export const main = async (ns: NS) => {
 
       // Buy Neuroflux Governor
       if (reputation >= repReq && ns.getPlayer().money >= price) {
-        if (await runLocal(ns, `plugins/singularity/buyFactionAugmentation.js`, 1, 'Daedalus', 'NeuroFlux Governor')) {
+        if (
+          await runLocal(
+            ns,
+            `plugins/singularity/buyFactionAugmentation.js`,
+            1,
+            'Daedalus',
+            'NeuroFlux Governor',
+          )
+        ) {
           ns.tprint('🧬 Bought neuroflux governor')
         }
       }
@@ -208,7 +243,13 @@ export const main = async (ns: NS) => {
       if (!app.getSetting('buyHardware') || app.getFact('allServersMaxed')) {
         const donationAmount = 10e9
         if (ns.getPlayer().money >= price + donationAmount) {
-          await runLocal(ns, `plugins/singularity/donateToFaction.js`, 1, 'Daedalus', donationAmount)
+          await runLocal(
+            ns,
+            `plugins/singularity/donateToFaction.js`,
+            1,
+            'Daedalus',
+            donationAmount,
+          )
         }
       }
 

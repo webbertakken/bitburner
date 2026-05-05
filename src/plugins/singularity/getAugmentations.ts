@@ -34,7 +34,9 @@ export async function main(ns: NS) {
     if (previousNumBought !== numBoughtAugmentations) {
       app.updateFact('boughtAugmentations', boughtAugmentations, true)
       app.updateFact('numBoughtAugmentations', numBoughtAugmentations, true)
-      ns.tprint(`🧬 Bought ${numBoughtAugmentations} augmentations so far (not counting NeuroFlux Governor).`)
+      ns.tprint(
+        `🧬 Bought ${numBoughtAugmentations} augmentations so far (not counting NeuroFlux Governor).`,
+      )
     }
 
     /**

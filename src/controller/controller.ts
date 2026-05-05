@@ -7,7 +7,7 @@ import { main as factions } from '@/controller/modules/factions'
 import { main as objectives } from '@/controller/modules/objectives'
 import { runLocal } from '@/core/run'
 
-const augmentations = async (ns: NS) => {
+const augmentations = async (_ns: NS) => {
   // Todo - Chongqing
   //  - Neuregen Gene Modification (40% hack xp)
   //  - Neuralstimulator (12% hack xp) ----

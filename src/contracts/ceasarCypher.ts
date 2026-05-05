@@ -1,6 +1,9 @@
-import { assertEquals } from 'https://deno.land/std/testing/asserts.ts'
-
-function caesarCipher(text: string, key: number): string {
+/**
+ * Caesar cipher decoder used by the bitburner "Encryption I" coding contract.
+ * Shifts uppercase ASCII letters back by `key` positions; non-letters are
+ * returned unchanged. Other characters (including spaces) pass through.
+ */
+export function caesarCipher(text: string, key: number): string {
   return text
     .split('')
     .map((char) => {
@@ -15,9 +18,3 @@ function caesarCipher(text: string, key: number): string {
     })
     .join('')
 }
-
-Deno.test('Caesar cipher test', () => {
-  const [input, key] = ['MACRO DEBUG PRINT FRAME CACHE', 5]
-  const expectedOutput = 'HVXMJ YZWPB KMDIO AMVHZ XVXCZ'
-  assertEquals(caesarCipher(input, key), expectedOutput)
-})

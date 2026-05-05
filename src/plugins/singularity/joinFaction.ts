@@ -8,7 +8,7 @@ export async function main(ns: NS) {
     if (!ns.singularity.joinFaction(faction)) throw new Error(`Unable to join.`)
     app.updateFact(`${faction}Joined`, true)
     ns.tprint(`🏛️ Joined ${faction}.`)
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Failed to join ${faction}.`)
   }
 }

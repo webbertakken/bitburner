@@ -12,7 +12,9 @@ export const getMilestones = (ns: NS): Milestone[] => [
     goal: 'get hacking level 150',
     target: 'n00dles',
     achieved: () =>
-      ns.getHackingLevel() >= 100 && ns.hasRootAccess('foodnstuff') && ns.fileExists('BruteSSH.exe', 'home'),
+      ns.getHackingLevel() >= 100 &&
+      ns.hasRootAccess('foodnstuff') &&
+      ns.fileExists('BruteSSH.exe', 'home'),
   },
   {
     goal: 'weaken food n stuff',
@@ -33,7 +35,8 @@ export const getMilestones = (ns: NS): Milestone[] => [
     type: 'weaken',
     target: 'harakiri-sushi',
     achieved: () =>
-      ns.getServerSecurityLevel('harakiri-sushi') === ns.getServerMinSecurityLevel('harakiri-sushi') ||
+      ns.getServerSecurityLevel('harakiri-sushi') ===
+        ns.getServerMinSecurityLevel('harakiri-sushi') ||
       (ns.getHackingLevel() >= 600 && ns.hasRootAccess('max-hardware')),
   },
   {
