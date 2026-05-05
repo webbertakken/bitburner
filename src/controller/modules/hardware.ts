@@ -45,7 +45,9 @@ export const main = async (ns: NS) => {
     }
 
     // Then upgrade the servers when affordable
-    const servers = ns.getPurchasedServers().sort((a, b) => ns.getServerMaxRam(a) - ns.getServerMaxRam(b))
+    const servers = ns
+      .getPurchasedServers()
+      .sort((a, b) => ns.getServerMaxRam(a) - ns.getServerMaxRam(b))
     let allServersMaxed = true
     for (const hostname of servers) {
       const ram = ns.getServerMaxRam(hostname)

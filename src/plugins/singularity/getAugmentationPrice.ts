@@ -13,7 +13,7 @@ export async function main(ns: NS) {
       // ns.tprint(`🏛️ ${augmentation} price updated.`)
       app.updateFact(augmentationsFactName, price, true)
     }
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Could not find price of ${augmentation}.`)
   }
 }

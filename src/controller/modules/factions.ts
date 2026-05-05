@@ -1,7 +1,6 @@
 import { NS } from '@ns'
 import { createApp } from '@/core/app'
 import { runLocal } from '@/core/run'
-import { FactionWorkType } from '@/plugins/singularity/workForFaction'
 
 export const main = async (ns: NS) => {
   const app = await createApp(ns)
@@ -14,7 +13,8 @@ export const main = async (ns: NS) => {
 
     // Join factions
     if (factionInvitations.length >= 1) {
-      if (!(await runLocal(ns, `plugins/singularity/joinFaction.js`, 1, factionInvitations[0]))) return
+      if (!(await runLocal(ns, `plugins/singularity/joinFaction.js`, 1, factionInvitations[0])))
+        return
 
       // // Work for faction
       // const focus = !app.getFact('hasNeuroreceptorManagementImplant')

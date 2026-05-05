@@ -6,7 +6,7 @@ export async function main(ns: NS) {
     await ns.singularity.installBackdoor()
     ns.tprint(`💥 Backdoored.`)
     await ns.sleep(100)
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Failed to backdoor.`)
   }
 }

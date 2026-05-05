@@ -10,7 +10,9 @@ export async function main(ns: NS) {
     .map((item) => `\n    ⚙️ configure ${item}`)
     .join('')
   if (ns.args.length === 0) {
-    return ns.tprint(`\n🪒 Usage:\n configure <setting>="<value>"\n\n Examples (current settings):${availableSettings}`)
+    return ns.tprint(
+      `\n🪒 Usage:\n configure <setting>="<value>"\n\n Examples (current settings):${availableSettings}`,
+    )
   }
 
   // Parsing

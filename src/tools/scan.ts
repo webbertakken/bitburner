@@ -21,7 +21,8 @@ export const main = async (ns: NS) => {
       const maxMoney = f.money(node.maxMoneys)
       const security = `${node.securityLevel}/${node.minSecurityLevel}`
       const memory = `${node.maxRam}GB`
-      const files = node.files.length <= 0 ? '' : `files:\n +---${node.files.map(file).join('\n +---')}`
+      const files =
+        node.files.length <= 0 ? '' : `files:\n +---${node.files.map(file).join('\n +---')}`
       return `${hasRootAccess} ${node.id} (${memory}, ${security}) - ${maxMoney} - ${node.path}. ${files}`
     })
     .join('\n')

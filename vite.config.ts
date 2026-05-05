@@ -1,5 +1,5 @@
-import { defineConfig } from 'viteburner';
-import { resolve } from 'path';
+import { defineConfig } from 'viteburner'
+import { resolve } from 'path'
 
 export default defineConfig({
   resolve: {
@@ -17,4 +17,4 @@ export default defineConfig({
     watch: [{ pattern: 'src/**/*.{js,ts}', transform: true }, { pattern: 'src/**/*.{script,txt}' }],
     sourcemap: 'inline',
   },
-});
+})

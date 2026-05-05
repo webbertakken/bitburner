@@ -12,7 +12,7 @@ export async function main(ns: NS) {
     if (invitations.length > 0) ns.tprint(`🏛️ Found ${invitations.length} faction invitations.`)
 
     app.updateFact('factionInvitations', invitations, true)
-  } catch (error) {
+  } catch {
     ns.tprint(`❌ Failed to update faction invitations`)
   }
 }

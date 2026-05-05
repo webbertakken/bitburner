@@ -3,7 +3,7 @@ import { NS } from '@ns'
 /**
  * Gangs
  */
-export const main = async (ns: NS) => {
+export const main = async (_ns: NS) => {
   // Organized crime groups quickly filled the void of power left behind from the collapse of
   // Western government in the 2050s. As society and civilization broke down, people quickly
   // succumbed to the innate human impulse of evil and savagery. The organized crime factions
@@ -12,7 +12,7 @@ export const main = async (ns: NS) => {
   // Certain Factions give the player the ability to form and manage their own gangs.
   // These gangs will earn the player money and reputation with the corresponding Faction.
   // Every Augmentation in the game will be available through these Factions.
-  const gangFactions = [
+  const _gangFactions = [
     'Slum Snakes',
     'Tetrads',
     'The Syndicate',
